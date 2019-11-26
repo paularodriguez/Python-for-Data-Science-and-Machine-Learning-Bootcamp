@@ -1,0 +1,98 @@
+import numpy as np
+
+# Simple python list
+my_list = [1, 2, 3]
+print(my_list)
+
+# Numpy Array
+array = np.array(my_list)
+print(array)
+print(type(array))
+
+# Bidimensional array
+my_mat = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+my_mat_array = np.array(my_mat)
+print(my_mat_array)
+print(type(my_mat_array))
+
+# Create arrays faster
+
+array_1 = np.arange(0, 10, 2)  # Start, end, step
+print(array_1)
+
+# Array of zeros
+
+array_2 = np.zeros(3)
+print(array_2)
+
+array_3 = np.zeros((2, 3))
+print(array_3)
+
+# Array of ones
+
+array_4 = np.ones((2, 3))
+print(array_4)
+
+# Linspace: Returns X evenly space points from start to end
+
+array_5 = np.linspace(0, 5, 10)
+print(array_5)
+
+# Identity matrix
+array_6 = np.eye(7)
+print(array_6)
+
+# Array of random numbers - Numbers from a distribution from 0 to 1
+array_7 = np.random.rand(5)
+print(array_7)
+
+array_8 = np.random.rand(3, 3)
+print(array_8)
+
+# Array of random numbers - Numbers from a normal distribution center around 0
+array_9 = np.random.randn(5)
+print(array_9)
+
+array_10 = np.random.randn(5, 5)
+print(array_10)
+
+# Array of random numbers - Random integers from a low to a high number
+# Includes low number but no the high number
+# Paramenters are: low number, high number, number of random elements
+array_11 = np.random.randint(1, 100, 10)
+print(array_11)
+
+# Reshape: Changes the dimensions of the array
+
+array_12 = np.arange(0, 25)
+print(array_12)
+array_13 = np.random.randint(0, 50, 10)
+print(array_13)
+
+# Converts the one dimensional array to one 5x5 array
+array_12 = array_12.reshape(5,5)
+print(array_12)
+
+# Find max value
+max_value = array_13.max()
+print(max_value)
+
+# Find min value
+min_value = array_13.min()
+print(min_value)
+
+# Index location of max value
+max_index = array_13.argmax()
+print(max_index)
+
+# Index location of min value
+min_index = array_13.argmin()
+print(min_index)
+
+# Get the shape of the vector
+print(array_12.shape)
+print(array_13.shape)
+
+# Get the datatype
+print(array_12.dtype)
+print(array_13.dtype)
