@@ -61,12 +61,19 @@ print(domain)
 # Create a basic function that returns True if the word 'dog' is contained in the input string.
 # Don't worry about edge cases like a punctuation being attached to the word dog, but do account for capitalization.
 
+# One way
+
+# def findDog(string):
+#     return string.lower().count('dog') > 0
+
+# Another way
+
 def findDog(string):
-    return string.lower().count('dog') > 0
+    return 'dog' in string.lower().split()
 
 
 val = findDog('Is there a dog here?')
-print(val)
+print("Is there a dog here?: ", val)
 
 
 # Create a function that counts the number of times the word "dog" occurs in a string. Again ignore edge cases.
@@ -76,7 +83,7 @@ def countDog(string):
 
 
 val = countDog('This dog runs faster than the other dog dude!')
-print(val)
+print("CountDog: ", val)
 
 # Use lambda expressions and the filter() function to filter out words
 # from a list that don't start with the letter 's'. For example:
