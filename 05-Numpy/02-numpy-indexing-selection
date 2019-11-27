@@ -1,0 +1,40 @@
+import numpy as np
+
+arr = np.arange(0, 11)
+
+print(arr)
+
+# Indexing
+print(arr[5])
+
+# Slicing
+print(arr[5:8])
+print(arr[:3])
+print(arr[3:])
+
+# Update multiple values - Only numpy arrays not simple python lists
+arr[0:3] = 100
+print(arr)
+
+# Array operations - copies of arrays
+array_copy = arr[5:]
+array_copy[:]= 99
+print(array_copy)
+
+# NOTE! Original array is also updated. It's because Python creates a reference
+# to the original array to save memory. If we want a copy of the original array
+# we should specify it
+
+print(arr)
+
+# Copy array
+
+right_array_copy = arr.copy()
+print(right_array_copy)
+
+# Perform changes
+right_array_copy[:]=100
+
+# Now original array is not modified
+print(right_array_copy)
+print(arr)
