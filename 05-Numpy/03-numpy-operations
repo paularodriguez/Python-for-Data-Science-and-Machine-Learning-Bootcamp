@@ -1,0 +1,57 @@
+import numpy as np
+
+arr = np.arange(0, 11)
+print(arr)
+
+# Addition
+
+arr2 = arr + arr
+print(arr2)
+
+arr2b = arr + 100
+print(arr2b)
+
+# Subtraction
+
+arr3 = arr - arr
+print(arr3)
+
+# Multiplication
+
+arr4 = arr * 4
+print(arr4)
+
+# NOTE: By zero division
+# Numpy does not throw an error, continues the execution and displays one warning
+
+print(arr / arr)
+
+# Power of two
+
+arr5 = arr ** 2
+print(arr5)
+
+# Square root
+
+arr6 = np.sqrt(arr)
+print(arr6)
+
+# Exponential
+
+arr7 = np.exp(arr)
+print(arr7)
+
+# Maximum
+print(np.max(arr))
+
+# Minimum
+print(np.min(arr))
+
+# Sin
+print(np.sin(arr))
+
+# Logarithm
+print(np.log(arr))
+
+# More functions documentation:
+# https://docs.scipy.org/doc/numpy/reference/ufuncs.html
