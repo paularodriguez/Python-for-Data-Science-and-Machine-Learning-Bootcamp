@@ -12,6 +12,11 @@ print(np.ones(10))
 
 # Create an array of 10 fives
 
+# Course solutions
+print(np.ones(10) * 5)
+print(np.zeros(10) + 5)
+
+# My solution
 print(np.array([5] * 10))
 
 # Create an array of the integers from 10 to 50
@@ -20,7 +25,7 @@ print(np.arange(10, 51))
 
 # Create an array of all the even integers from 10 to 50
 
-print(np.arange(11, 51, 2))
+print(np.arange(10, 51, 2))
 
 # Create a 3x3 matrix with values ranging from 0 to 8
 
@@ -28,7 +33,7 @@ print(np.arange(0, 9).reshape(3, 3))
 
 # Create a 3x3 identity matrix
 
-print(np.identity(3))
+print(np.eye(3))
 
 # Use NumPy to generate a random number between 0 and 1
 
@@ -51,6 +56,11 @@ print(np.random.randn(25))
 #        [ 0.81,  0.82,  0.83,  0.84,  0.85,  0.86,  0.87,  0.88,  0.89,  0.9 ],
 #        [ 0.91,  0.92,  0.93,  0.94,  0.95,  0.96,  0.97,  0.98,  0.99,  1.  ]])
 
+# Course solutions
+print(np.arange(1,101).reshape(10,10)/100)
+print(np.linspace(0.01,1,100).reshape(10,10))
+
+# My solution
 print(np.arange(0.01, 1.01, 0.01).reshape(10, 10))
 
 # Create an array of 20 linearly spaced points between 0 and 1:
@@ -101,14 +111,14 @@ print(mat[0:3, 1:2])
 
 # array([21, 22, 23, 24, 25])
 
-print(mat[4])
+print(mat[4, :])
 
 # WRITE CODE HERE THAT REPRODUCES THE OUTPUT OF THE CELL BELOW
 
 # array([[16, 17, 18, 19, 20],
 #        [21, 22, 23, 24, 25]])
 
-print(mat[3:])
+print(mat[3:, :])
 
 # PART 3
 
@@ -120,6 +130,7 @@ print(mat.sum())
 # Get the standard deviation of the values in mat
 
 print(np.std(mat))
+print(mat.std())
 
 # Get the sum of all the columns in mat
 
