@@ -1,0 +1,45 @@
+import numpy as np
+import pandas as pd
+
+labels = ['a', 'b', 'c']
+my_data = [10, 20, 30]
+arr = np.array(my_data)
+d = {'a': 10, 'b': 20, 'c': 30}
+
+series = pd.Series(my_data)
+print(series)
+
+# We can specify the indexes
+
+series = pd.Series(data=my_data, index=labels)
+print(series)
+
+# We can also pass a dictionary, Panda takes automatically the keys and the values
+
+series = pd.Series(d)
+print(series)
+
+# Panda Series can hold several objects like strings or functions
+
+series = pd.Series(data=labels)
+print(series)
+
+series = pd.Series(data=[sum, print, len])
+print(series)
+
+# Grab information
+
+ser1 = pd.Series([1, 2, 3, 4], ['USA', 'Germany', 'USSR', 'Japan'])
+print(ser1)
+
+ser2 = pd.Series([1, 2, 5, 4], ['USA', 'Germany', 'Italy', 'Japan'])
+print(ser2)
+
+# Get first element
+
+print("USA: ", ser1['USA'])
+
+# Sum series: It matches the labels of both series
+
+sum = ser1 + ser2
+print(sum)
