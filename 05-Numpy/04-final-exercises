@@ -1,5 +1,7 @@
 import numpy as np
 
+# PART 1: NUMPY
+
 # Create an array of 10 zeros
 
 print(np.zeros(10))
@@ -59,3 +61,51 @@ print(np.arange(0.01, 1.01, 0.01).reshape(10, 10))
 #         0.78947368,  0.84210526,  0.89473684,  0.94736842,  1.        ])
 
 print(np.linspace(0, 1, 20))
+
+# PART 2: Numpy Indexing and Selection
+
+# Now you will be given a few matrices, and be asked to replicate the resulting matrix outputs:
+
+mat = np.arange(1, 26).reshape(5, 5)
+
+# array([[ 1,  2,  3,  4,  5],
+#        [ 6,  7,  8,  9, 10],
+#        [11, 12, 13, 14, 15],
+#        [16, 17, 18, 19, 20],
+#        [21, 22, 23, 24, 25]])
+
+
+# WRITE CODE HERE THAT REPRODUCES THE OUTPUT OF THE CELL BELOW
+
+# array([[12, 13, 14, 15],
+#        [17, 18, 19, 20],
+#        [22, 23, 24, 25]])
+
+print(mat[2:, 1:])
+
+# WRITE CODE HERE THAT REPRODUCES THE OUTPUT OF THE CELL BELOW
+
+# 20
+
+print(mat[3, 4])
+
+# WRITE CODE HERE THAT REPRODUCES THE OUTPUT OF THE CELL BELOW
+
+# array([[ 2],
+#        [ 7],
+#        [12]])
+
+print(mat[0:3, 1:2])
+
+# WRITE CODE HERE THAT REPRODUCES THE OUTPUT OF THE CELL BELOW
+
+# array([21, 22, 23, 24, 25])
+
+print(mat[4])
+
+# WRITE CODE HERE THAT REPRODUCES THE OUTPUT OF THE CELL BELOW
+
+# array([[16, 17, 18, 19, 20],
+#        [21, 22, 23, 24, 25]])
+
+print(mat[3:])
