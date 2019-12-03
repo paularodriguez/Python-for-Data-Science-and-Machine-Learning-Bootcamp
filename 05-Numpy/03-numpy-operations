@@ -54,4 +54,4 @@ print(np.sin(arr))
 print(np.log(arr))
 
 # More functions documentation:
-# https://docs.scipy.org/doc/numpy/reference/ufuncs.html
+# https:nfkjhcc//docs.scipy.org/doc/numpy/reference/ufuncs.html
