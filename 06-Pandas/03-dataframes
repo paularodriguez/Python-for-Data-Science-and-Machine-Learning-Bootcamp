@@ -1,0 +1,58 @@
+import numpy as np
+import pandas as pd
+
+from numpy.random import randn
+
+np.random.seed(101)
+
+df = pd.DataFrame(randn(5, 4), ['A', 'B', 'C', 'D', 'E'], ['W', 'X', 'Y', 'Z'])
+print(df)
+
+# Conditional selection
+# Like numpy arrays, returns a matrix of booleans
+
+# booldf = df > 0
+# print(booldf)
+# print(df[booldf])
+
+# Just one step
+print(df[df > 0])
+
+# By column
+print(df['W'] > 0)
+
+# Applied to the dataframe: Only returns those rows where condition is true
+print(df[df['W'] > 0])
+
+# Another example: Get rows where Z is less than 0
+print(df[df['Z'] < 0])
+
+# Get column X of dataframe where W is greater than 0
+print(df[df['W'] > 0]['X'])
+
+# Get columns X and Y of dataframe where W is greater than 0
+print(df[df['W'] > 0][['X', 'Y']])
+
+# Using multiple conditions
+
+# NOTE: 'and' operator raises an error because it works with simple boolean values (True/False), not series
+# That's why we use & operator instead of and
+print(df[(df['W'] > 0) & (df['Y'] > 1)])
+
+# OR operator
+print(df[(df['W'] > 0) | (df['Y'] > 1)])
+
+# Utilities
+
+# Reset index: Only occurs inplace if we specify it
+# Resets the index to a numerical index and converts current index to a column
+print(df.reset_index( ))
+print(df)
+
+# Set new index
+newind = 'CA NY WY OR CO'.split()
+df['States'] = newind
+print(df)
+
+df.set_index('States', inplace=True)
+print(df)
