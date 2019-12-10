@@ -1,1 +1,56 @@
- 
+import numpy as np
+import pandas as pd
+from numpy.random import randn
+
+np.random.seed(101)
+
+# Index levels
+
+outside = ['G1', 'G1', 'G1', 'G2', 'G2', 'G2']
+inside = [1, 2, 3, 1, 2, 3]
+# Gets pairs combining both lists elements:
+hier_index = list(zip(outside, inside))
+# Returns: [('G1', 1), ('G1', 2), ('G1', 3), ('G2', 1), ('G2', 2), ('G2', 3)]
+
+hier_index = pd.MultiIndex.from_tuples(hier_index)
+# Returns:  [('G1', 1), ('G1', 2), ('G1', 3), ('G2', 1), ('G2', 2), ('G2', 3)]
+
+df = pd.DataFrame(randn(6, 2), hier_index, ['A', 'B'])
+print(df)
+
+# Multilevel index dataframe
+#              A         B
+# G1 1 -0.243503 -0.386107
+#    2 -0.770625  0.244746
+#    3 -0.045977 -1.668029
+# G2 1 -1.499536 -0.138127
+#    2 -0.345086  0.871942
+#    3  0.517312  0.834652
+
+# Indexing dataframe
+print(df.loc['G1'])
+print(df.loc['G1'].loc[2])
+
+# Set index names
+df.index.names = ['Groups', 'Num']
+print(df)
+# After name the index
+#                    A         B
+# Groups Num
+# G1     1    2.706850  0.628133
+#        2    0.907969  0.503826
+#        3    0.651118 -0.319318
+# G2     1   -0.848077  0.605965
+#        2   -2.018168  0.740122
+#        3    0.528813 -0.589001
+
+# Get 0.740122 value
+print(df.loc['G2'].loc[2]['B'])
+
+# Cross-section: Returns a cross section on rows or columns
+
+print(df.xs('G1'))
+
+# Another example: Grab values G1 - 1 and G2 - 1
+# Returns values where Num is equals to 1
+print(df.xs(1, level='Num'))
