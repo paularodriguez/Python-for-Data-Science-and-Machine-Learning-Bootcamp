@@ -1,0 +1,52 @@
+import numpy as np
+import pandas as pd
+
+# Create a dataframe from one dictionary with missing values
+d = {'A': [1, 2, np.nan], 'B': [5, np.nan, np.nan], 'C': [1, 2, 3]}
+df = pd.DataFrame(d)
+
+print(df)
+
+#      A    B  C
+# 0  1.0  5.0  1
+# 1  2.0  NaN  2
+# 2  NaN  NaN  3
+
+
+# Drop method: Removes missing values
+# By default, the operation is along the rows
+print(df.dropna())
+
+#      A    B  C
+# 0  1.0  5.0  1
+
+# To do it along the columns
+print(df.dropna(axis=1))
+
+#    C
+# 0  1
+# 1  2
+# 2  3
+
+# We can specify a threshold: It means that we keep rows with at least 2 (given thresh) non na values
+print(df.dropna(thresh=2))
+
+#      A    B  C
+# 0  1.0  5.0  1
+# 1  2.0  NaN  2
+
+
+# Replace missing values
+print(df.fillna(value="FILL VALUE"))
+
+#             A           B  C
+# 0           1           5  1
+# 1           2  FILL VALUE  2
+# 2  FILL VALUE  FILL VALUE  3
+
+# Another more complex example: Column A nan value has been filled with the mean of the other values
+print(df['A'].fillna(value=df['A'].mean()))
+
+# 0    1.0
+# 1    2.0
+# 2    1.5
