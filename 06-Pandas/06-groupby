@@ -1,0 +1,57 @@
+import numpy as np
+import pandas as pd
+
+data = {'Company': ['GOOG', 'GOOG', 'MSFT', 'MSFT', 'FB', 'FB'],
+        'Person': ['Sam', 'Charlie', 'Amy', 'Vanessa', 'Carl', 'Sarah'],
+        'Sales': [200, 120, 340, 124, 243, 350]}
+
+df = pd.DataFrame(data)
+print(df)
+
+#   Company   Person  Sales
+# 0    GOOG      Sam    200
+# 1    GOOG  Charlie    120
+# 2    MSFT      Amy    340
+# 3    MSFT  Vanessa    124
+# 4      FB     Carl    243
+# 5      FB    Sarah    350
+
+
+# Group by company
+byCompany = df.groupby('Company')
+
+# Over the result we can apply a function, like mean
+# It ignores non numeric columns
+print(byCompany.mean())
+#          Sales
+# Company
+# FB       296.5
+# GOOG     160.0
+# MSFT     232.0
+
+print(byCompany.sum())
+
+#          Sales
+# Company
+# FB         593
+# GOOG       320
+# MSFT       464
+
+# Get one company
+print(byCompany.sum().loc['FB'])
+
+# Sales    593
+# Name: FB, dtype: int64
+
+# Just one line
+print(df.groupby('Company').sum().loc['FB'])
+
+# Another useful function:
+print(byCompany.count())
+print(byCompany.max())
+print(byCompany.min())
+
+# Describe method: Returns a lot of useful information
+print(df.groupby('Company').describe())
+
+  
