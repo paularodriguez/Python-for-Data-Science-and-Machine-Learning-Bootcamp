@@ -1,0 +1,77 @@
+# NOTE - Install the following libraries:
+# - sqlalchemy
+# - xlrd
+# - html5lib
+# - BeautifulSoup4
+# - Excel: xlrd and openpyxl
+
+import pandas as pd
+
+# Read data from one csv
+df_csv = pd.read_csv('example.csv')
+print(df_csv)
+
+#     a   b   c   d
+# 0   0   1   2   3
+# 1   4   5   6   7
+# 2   8   9  10  11
+# 3  12  13  14  15
+
+# Write dataframe as csv
+# False index parameter is to indicate that we don't want to save the index as one column
+df_csv.to_csv('my_csv.csv', index=False)
+
+# Read data from one excel file
+df_excel = pd.read_excel('Excel_Sample.xlsx', sheet_name=0)
+print(df_excel)
+
+#    Unnamed: 0   a   b   c   d
+# 0           0   0   1   2   3
+# 1           1   4   5   6   7
+# 2           2   8   9  10  11
+# 3           3  12  13  14  15
+
+# Write to excel
+df_excel.to_excel("My_Excel.xlsx", sheet_name='NewSheet')
+
+# Read HTML
+
+html_page = "https://www.fdic.gov/bank/individual/failed/banklist.html"
+data = pd.read_html(html_page)
+
+# The parser gets the html from the <li> tags
+# Desired data is the first element of the list
+print(data[0].head())
+
+#                                Bank Name  ...       Updated Date
+# 0       City National Bank of New Jersey  ...   November 7, 2019
+# 1                          Resolute Bank  ...  November 12, 2019
+# 2                  Louisa Community Bank  ...   November 7, 2019
+# 3                   The Enloe State Bank  ...    August 22, 2019
+# 4    Washington Federal Bank for Savings  ...      July 24, 2019
+# ..                                   ...  ...                ...
+# 554                   Superior Bank, FSB  ...    August 19, 2014
+# 555                  Malta National Bank  ...  November 18, 2002
+# 556      First Alliance Bank & Trust Co.  ...  February 18, 2003
+# 557    National State Bank of Metropolis  ...     March 17, 2005
+# 558                     Bank of Honolulu  ...     March 17, 2005
+
+# Read from SQL tables
+
+# This library allows the creation of one simple sql engine in memory
+from sqlalchemy import create_engine
+
+# Create memory sql engine
+engine = create_engine('sqlite:///:memory:')
+# Save some data
+df_csv.to_sql('my_table', engine)
+
+# Read data
+sqldf = pd.read_sql('my_table', con=engine)
+print(sqldf)
+
+#    index   a   b   c   d
+# 0      0   0   1   2   3
+# 1      1   4   5   6   7
+# 2      2   8   9  10  11
+# 3      3  12  13  14  15
