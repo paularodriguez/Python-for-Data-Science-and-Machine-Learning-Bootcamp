@@ -1,0 +1,133 @@
+def separator():
+    print("-" * 100)
+
+
+import pandas as pd
+
+# Read Salaries.csv as a dataframe called sal
+
+sal = pd.read_csv("Salaries.csv")
+
+# Check the head of the DataFrame.
+head = sal.head()
+print(head)
+separator()
+
+# Use the .info() method to find out how many entries there are.**
+info = sal.info()
+print(info)
+separator()
+
+# What is the average BasePay?
+avg = sal['BasePay'].mean()
+print(avg)
+separator()
+
+# What is the highest amount of OvertimePay in the dataset?
+
+max = sal['OvertimePay'].max()
+print(max)
+separator()
+
+# What is the job title of JOSEPH DRISCOLL?
+# Note: Use all caps, otherwise you may get an answer that doesn't match up (there is also a lowercase Joseph Driscoll).
+
+# Step 1. Get the row
+# row = sal[sal['EmployeeName'] == 'JOSEPH DRISCOLL']
+
+# Step 2: Get the value
+# job_title = row['JobTitle']
+
+# Just one step:
+job_title = sal[sal['EmployeeName'] == 'JOSEPH DRISCOLL']['JobTitle']
+print(job_title)
+separator()
+
+# How much does JOSEPH DRISCOLL make (including benefits)?
+total_paid = sal[sal['EmployeeName'] == 'JOSEPH DRISCOLL']['TotalPayBenefits']
+print(total_paid)
+separator()
+
+# What is the name of highest paid person (including benefits)?
+max_paid_name = sal[sal['TotalPayBenefits'] == sal['TotalPayBenefits'].max()]['EmployeeName']
+print(max_paid_name)
+
+# -- Another way
+max_paid_name_v2 = sal.iloc[sal['TotalPayBenefits'].idxmax()]['EmployeeName']
+print(max_paid_name_v2)
+
+separator()
+
+# What is the name of lowest paid person (including benefits)? Do you notice something strange about how much he or she is paid?
+
+min_paid_name = sal[sal['TotalPayBenefits'] == sal['TotalPayBenefits'].min()]['EmployeeName']
+print(min_paid_name)
+
+# -- Another way
+min_paid_name_v2 = sal.iloc[sal['TotalPayBenefits'].idxmin()]['EmployeeName']
+print(min_paid_name_v2)
+
+separator()
+
+# What was the average (mean) BasePay of all employees per year? (2011-2014) ?
+
+avg = sal.groupby('Year').mean()['BasePay']
+print(avg)
+separator()
+
+# How many unique job titles are there?
+
+job_titles = sal['JobTitle'].nunique()
+print(job_titles)
+separator()
+
+# What are the top 5 most common jobs?
+
+top_5 = sal['JobTitle'].value_counts().head(5)
+print(top_5)
+separator()
+
+# How many Job Titles were represented by only one person in 2013? (e.g. Job Titles with only one occurence in 2013?)
+
+# Step 1: Get the job titles with one person in 2013
+job_titles = sal[sal['Year'] == 2013]['JobTitle'].value_counts() == 1
+
+# Step 2: Get the count (to get it we can sum the booleans)
+count = sum(job_titles)
+print(count)
+separator()
+
+
+# How many people have the word Chief in their job title? (This is pretty tricky)
+
+# Aux function
+def chief_string(title):
+    return 'chief' in title.lower().split()
+
+
+count = sum(sal['JobTitle'].apply(lambda x: chief_string(x)))
+print(count)
+separator()
+
+# Bonus: Is there a correlation between length of the Job Title string and Salary?
+
+sal['title_len'] = sal['JobTitle'].apply(len)
+print(sal[['JobTitle', 'title_len']])
+
+# .corr() method allows us see if there is a correlation between columns
+
+# Between JobTitle and title_len
+print(sal[['JobTitle', 'title_len']].corr())
+
+# Correlation
+#            title_len
+# title_len        1 .0
+
+
+# Between title_len  and Salary
+print(sal[['title_len', 'TotalPayBenefits']].corr())
+
+# No correlation
+#                   title_len  TotalPayBenefits
+# title_len          1.000000         -0.036878
+# TotalPayBenefits  -0.036878          1.000000
