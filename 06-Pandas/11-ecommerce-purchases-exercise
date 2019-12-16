@@ -1,0 +1,98 @@
+def separator():
+    print("-" * 100)
+
+
+import pandas as pd
+
+# Import pandas and read in the Ecommerce Purchases csv file and set it to a DataFrame called ecom.
+
+ecom = pd.read_csv("Ecommerce Purchases.csv")
+
+# Check the head of the DataFrame.
+
+head = ecom.head(1)
+print(head)
+separator()
+
+# How many rows and columns are there?
+info = ecom.info()
+print(info)
+separator()
+
+# What is the average Purchase Price?
+avg = ecom['Purchase Price'].mean()
+print(avg)
+separator()
+
+# What were the highest and lowest purchase prices?
+max = ecom['Purchase Price'].max()
+min = ecom['Purchase Price'].min()
+print(max)
+print(min)
+separator()
+
+# How many people have English 'en' as their Language of choice on the website?
+
+count = ecom[ecom['Language'] == 'en'].count()
+print(count)
+separator()
+
+# How many people have the job title of "Lawyer"?
+
+count = ecom[ecom['Job'] == 'Lawyer'].count()
+print(count)
+separator()
+
+# How many people made the purchase during the AM and how many people made the purchase during PM?
+# Hint: Check out [value_counts()](http://pandas.pydata.org/pandas-docs/stable/generated/pandas.Series.value_counts.html) )
+
+count_am = ecom['AM or PM'].value_counts()['AM']
+print(count_am)
+count_pm = ecom['AM or PM'].value_counts()['PM']
+print(count_pm)
+separator()
+
+# What are the 5 most common Job Titles?
+
+top_5 = ecom['Job'].value_counts().head(5)
+print(top_5)
+separator()
+
+# Someone made a purchase that came from Lot: "90 WT" , what was the Purchase Price for this transaction?
+
+price = ecom[ecom['Lot'] == '90 WT']['Purchase Price']
+print(price)
+separator()
+
+# What is the email of the person with the following Credit Card Number: 4926535242672853
+
+email = ecom[ecom['Credit Card'] == 4926535242672853]['Email']
+print(email)
+separator()
+
+# How many people have American Express as their Credit Card Provider *and* made a purchase above $95?
+
+people = ecom[(ecom['CC Provider'] == 'American Express') & (ecom['Purchase Price'] > 95)].count()
+print(people)
+separator()
+
+
+# How many people have a credit card that expires in 2025?
+def exp_year_2025(date):
+    year = date.split("/")[1]
+    return year == '25'
+
+
+people = ecom[(ecom['CC Exp Date'].apply(exp_year_2025))].count()
+print(people)
+separator()
+
+
+# Hard: What are the top 5 most popular email providers/hosts (e.g. gmail.com, yahoo.com, etc...)
+def get_email_provider(email):
+    return email.split("@")[1]
+
+
+ecom['email_provider'] = ecom['Email'].apply(get_email_provider)
+top_5_providers = ecom.groupby('email_provider').count().head(5)
+print(top_5_providers)
