@@ -1,0 +1,57 @@
+# Install matplotlib
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Mocked data
+x = np.linspace(0, 5, 11)
+y = x ** 2
+
+# Functional way
+plt.plot(x, y)
+
+# Axis labels and title
+plt.xlabel('X Label')
+plt.ylabel('Y Label')
+plt.title('Title')
+
+# Add another plot to the canvas
+# Params: number of rows, number of columns and the plot number referred
+plt.subplot(1, 2, 1)
+plt.plot(x, y, 'r')
+
+plt.subplot(1, 2, 2)
+plt.plot(y, x, 'b')
+
+plt.show()
+
+# Object oriented way
+
+# Blank canvas
+fig = plt.figure()
+
+# Define axis
+axes = fig.add_axes([0.1, 0.1, 0.8, 0.8])
+# Plot data
+axes.plot(x, y)
+
+# Add axis labels and title
+axes.set_xlabel('X Label')
+axes.set_ylabel('Y Label')
+axes.set_title('Title')
+
+fig.show()
+
+fig = plt.figure()
+axes1 = fig.add_axes([0.1, 0.1, 0.8, 0.8])
+axes2 = fig.add_axes([0.2, 0.5, 0.4, 0.3])
+
+# Sample position: Bottom right
+# axes2 = fig.add_axes([0.5, 0.15, 0.4, 0.3])
+
+axes1.plot(x,y)
+axes2.plot(y,x)
+axes1.set_title('LARGER PLOT')
+axes2.set_title('SMALLER PLOT')
+fig.show()
+
