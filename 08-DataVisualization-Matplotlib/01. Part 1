@@ -1,1 +1,151 @@
- 
+# Install matplotlib
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Mocked data
+x = np.linspace(0, 5, 11)
+y = x ** 2
+
+# Functional way
+plt.plot(x, y)
+
+# Axis labels and title
+plt.xlabel('X Label')
+plt.ylabel('Y Label')
+plt.title('Title')
+
+# Add another plot to the canvas
+# Params: number of rows, number of columns and the plot number referred
+plt.subplot(1, 2, 1)
+plt.plot(x, y, 'r')
+
+plt.subplot(1, 2, 2)
+plt.plot(y, x, 'b')
+
+plt.show()
+
+# Object oriented way
+
+# Blank canvas
+fig = plt.figure()
+
+# Define axis
+axes = fig.add_axes([0.1, 0.1, 0.8, 0.8])
+# Plot data
+axes.plot(x, y)
+
+# Add axis labels and title
+axes.set_xlabel('X Label')
+axes.set_ylabel('Y Label')
+axes.set_title('Title')
+
+fig.show()
+
+fig = plt.figure()
+axes1 = fig.add_axes([0.1, 0.1, 0.8, 0.8])
+axes2 = fig.add_axes([0.2, 0.5, 0.4, 0.3])
+
+# Sample position: Bottom right
+# axes2 = fig.add_axes([0.5, 0.15, 0.4, 0.3])
+
+axes1.plot(x, y)
+axes2.plot(y, x)
+axes1.set_title('LARGER PLOT')
+axes2.set_title('SMALLER PLOT')
+fig.show()
+
+# Create subplots using OO way
+
+fig, axes = plt.subplots(nrows=1, ncols=2)
+
+# Plot directly
+# axes.plot(x,y)
+
+# Axes are iterable
+# for current_ax in axes:
+#     current_ax.plot(x, y)
+
+# Axes are indexable
+axes[0].plot(x, y)
+axes[1].plot(x, y)
+
+# Labels
+axes[0].set_title("First plot")
+axes[1].set_title("Second plot")
+
+# Axes labels
+axes[0].set_xlabel('First X Label')
+axes[0].set_ylabel('First Y Label')
+axes[1].set_xlabel('Second X Label')
+axes[1].set_ylabel('Second Y Label')
+
+# Avoid overlapping. Its usage is recommended after plot statements
+# plt.tight_layout()
+plt.show()
+
+# Figure size and DPI
+# DPI is the pixels per inch
+fig, axes = plt.subplots(nrows=2, ncols=1, figsize=(8, 2), dpi=100)
+axes[0].plot(x, y)
+axes[1].plot(y, x)
+plt.show()
+
+# Save figures
+
+fig.savefig("my_picture.png", dpi=200)
+
+# Legends
+fig2 = plt.figure()
+ax = fig2.add_axes([0, 0, 1, 1])
+ax.plot(x, x ** 2, label="X Square")
+ax.plot(x, x ** 3, label="X Cubed")
+
+# Loc 0 means best location
+ax.legend(loc=0)
+
+# custom location
+# ax.legend(loc=(0.1, 0.1))
+
+# NOTE: Check here legend location codes
+# https://matplotlib.org/3.1.1/api/_as_gen/matplotlib.pyplot.legend.html
+
+plt.show()
+
+# Colors
+fig = plt.figure()
+ax = fig.add_axes([0, 0, 1, 1])
+
+# ax.plot(x,y,color='green')
+
+# We can also specify one hex code
+# ax.plot(x,y,color='#FF8C00')
+
+# Line width and style
+# Default line width is 1
+# Alpha to specify the opacity
+# Linestyle: dotted, dash..
+# Markers: o, +, * ...
+# Marker size
+# Markerfacecolor: The color of the center of the marker
+# Markeredgewidth: The width of the border of the marker
+# markeredgecolor: The color of the border of the marker
+ax.plot(x, y, color='purple', linewidth=10, alpha=0.8, linestyle='--',
+        marker='o', markersize=15,
+        markerfacecolor='pink', markeredgewidth=3, markeredgecolor='blue')
+
+fig.show()
+fig.savefig('my_colourful_figure.png')
+
+# Axis styles
+
+fig = plt.figure()
+ax = fig.add_axes([0, 0, 1, 1])
+
+ax.plot(x, y, color='purple', lw=3, ls='--')
+
+# Set axis lower and upper limits
+ax.set_xlim([0, 1])
+ax.set_xlim([0, 2])
+
+fig.show()
