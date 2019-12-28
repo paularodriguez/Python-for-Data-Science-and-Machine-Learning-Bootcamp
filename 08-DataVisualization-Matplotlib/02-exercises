@@ -71,7 +71,10 @@ ax3_2.set_ylabel('y')
 ax3_2.set_title('zoom')
 
 ax3_1.plot(x, z)
-ax3_2.plot(x[20:22], y[20:22])
+ax3_2.plot(x, y)
+ax3_2.set_xlim(20, 22)
+ax3_2.set_ylim(30, 50)
+
 plt.show()
 
 # Exercise 4
