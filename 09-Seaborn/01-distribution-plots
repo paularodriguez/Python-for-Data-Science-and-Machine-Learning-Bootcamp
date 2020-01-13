@@ -1,0 +1,54 @@
+# Install seaborn
+
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Seaborn built in datasets
+tips = sns.load_dataset('tips')
+
+print(tips.head())
+
+# price of the meal | tip | gender | smoker or not | dinner or lunch | size of the group
+#    total_bill   tip     sex smoker  day    time  size
+# 0       16.99  1.01  Female     No  Sun  Dinner     2
+# 1       10.34  1.66    Male     No  Sun  Dinner      3
+# 2       21.01  3.50    Male     No  Sun  Dinner     3
+# 3       23.68  3.31    Male     No  Sun  Dinner     2
+# 4       24.59  3.61  Female     No  Sun  Dinner     4
+
+
+# Distribution plot
+# Shows the distribution of ONE VARIABLE
+# kde = False -> Whether to plot a gaussian kernel density estimate
+# Bins parameter: The definition of the char. If the value increases there will be more columns
+
+sns.distplot(tips['total_bill'], kde=False, bins=30)
+plt.show()
+
+# Jointplot: It combines two distribution plot, so, it needs two variables
+sns.jointplot(x='total_bill', y='tip', data=tips)
+# Kinds: default (empty kind parameter), 'hex', 'reg', 'kde'
+# sns.jointplot(x='total_bill', y='tip', data=tips, kind='kde')
+plt.show()
+
+# Pairplot: Plots pairwise relationships across the numerical columns of the dataframe
+# Makes a joinplot for each column combination
+# When it compares the same variable, e.g. total_bill vs total_bill, it plots an histogram instead
+sns.pairplot(tips)
+plt.show()
+
+# Hue: For categorical (non numerical) columns.
+sns.pairplot(tips, hue='sex')
+plt.show()
+
+# # Another sample.
+# sns.pairplot(tips, hue='day')
+# plt.show()
+
+# Palette: to specify the color palette
+sns.pairplot(tips, hue='sex', palette='coolwarm')
+plt.show()
+
+# Rugplot: Represents the data with dashes
+sns.rugplot(tips['total_bill'])
+plt.show()
