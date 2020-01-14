@@ -1,0 +1,72 @@
+import seaborn as sns
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Tips sample dataset
+tips = sns.load_dataset('tips')
+print(tips.head())
+
+# Bar plot
+# Categorical column vs Numerical / Categorical column
+# If it's a numerical column, it displays the average/mean value
+sns.barplot(x='sex', y='total_bill', data=tips)
+plt.show()
+
+# If we want to specify the estimator, we'll do the following
+# We can use whatever existing function or our own function
+sns.barplot(x='sex', y='total_bill', data=tips, estimator=np.std)
+plt.show()
+
+# Count plot: Counts the number of occurrences of each category value,
+# so we only need to pass 'x' parameter
+sns.countplot(x='sex', data=tips)
+plt.show()
+
+# Boxplots
+sns.boxplot(x='day', y='total_bill', data=tips)
+plt.show()
+
+# Boxplot with another categorical column analysis
+# Splits by day, and then, by smoker status
+sns.boxplot(x='day', y='total_bill', data=tips, hue='smoker')
+plt.show()
+
+# Violin plots
+sns.violinplot(x='day', y='total_bill', data=tips)
+plt.show()
+
+# Violin plots with hue
+sns.violinplot(x='day', y='total_bill', data=tips, hue='smoker')
+plt.show()
+
+# Violin plots with hue and split enabled
+sns.violinplot(x='day', y='total_bill', data=tips, hue='smoker', split='True')
+plt.show()
+
+# Strip plots: It's like a scatter plot based on the category
+sns.stripplot(x='day', y='total_bill', data=tips)
+plt.show()
+
+# Problem: We can't see points that are stacked on top of others
+# jitter argument: adds random noise to separate stacked points
+sns.stripplot(x='day', y='total_bill', data=tips, jitter=True)
+plt.show()
+
+# As previous plots, we can add hue argument
+sns.stripplot(x='day', y='total_bill', data=tips, jitter=True, hue='smoker', split='True')
+plt.show()
+
+# Swarmplot: A combination of strip plot and violin plot
+sns.swarmplot(x='day', y='total_bill', data=tips)
+plt.show()
+
+# Swarmplot and violinplot combined
+sns.violinplot(x='day', y='total_bill', data=tips)
+sns.swarmplot(x='day', y='total_bill', data=tips, color='black')
+plt.show()
+
+# Factorplot
+sns.factorplot(x='day', y='total_bill', data=tips, kind='bar')
+plt.show()
+sns.factorplot(x='day', y='total_bill', data=tips, kind='violin')
+plt.show()
