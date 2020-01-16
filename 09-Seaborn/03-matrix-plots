@@ -1,0 +1,63 @@
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Tips sample dataset
+tips = sns.load_dataset('tips')
+print(tips.head())
+
+# Flights sample dataset
+flights = sns.load_dataset('flights')
+print(flights.head())
+
+#    year     month  passengers
+# 0  1949   January         112
+# 1  1949  February         118
+# 2  1949     March         132
+# 3  1949     April         129
+# 4  1949       May         121
+
+# The data should be as a matrix to create the plot
+# To do that, we are going to get correlation data
+
+tc = tips.corr();
+print(tc)
+
+#             total_bill       tip      size
+# total_bill    1.000000  0.675734  0.598315
+# tip           0.675734  1.000000  0.489299
+# size          0.598315  0.489299  1.000000
+
+# Now, we have the data as a matrix
+
+sns.heatmap(tc, annot=True, cmap='coolwarm')
+plt.show()
+
+# Convert to matrix using pivot tables
+
+fc = flights.pivot_table(index='month', columns='year', values='passengers')
+print(fc)
+
+# year       1949  1950  1951  1952  1953  ...  1956  1957  1958  1959  1960
+# month                                    ...
+# January     112   115   145   171   196  ...   284   315   340   360   417
+# February    118   126   150   180   196  ...   277   301   318   342   391
+# March       132   141   178   193   236  ...   317   356   362   406   419
+# April       129   135   163   181   235  ...   313   348   348   396   461
+# May         121   125   172   183   229  ...   318   355   363   420   472
+
+
+sns.heatmap(fc, cmap='magma')
+plt.show()
+
+sns.heatmap(fc, cmap='magma', linecolor='white', linewidths=1)
+plt.show()
+
+# Cluster map
+# This type of plot clusters the information joining similar columns and rows
+# That's why the years/months are unordered
+sns.clustermap(fc)
+plt.show()
+
+# Normalized scale and new colormap to clarify the info
+sns.clustermap(fc, cmap='coolwarm', standard_scale=1)
+plt.show()
