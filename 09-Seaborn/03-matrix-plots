@@ -19,7 +19,7 @@ print(flights.head())
 # The data should be as a matrix to create the plot
 # To do that, we are going to get correlation data
 
-tc = tips.corr();
+tc = tips.corr()
 print(tc)
 
 #             total_bill       tip      size
