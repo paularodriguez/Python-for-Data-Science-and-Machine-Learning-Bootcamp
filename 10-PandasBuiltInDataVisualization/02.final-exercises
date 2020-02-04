@@ -1,0 +1,76 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+
+df3 = pd.read_csv('df3')
+print(df3.head())
+
+#           a         b         c         d
+# 0  0.336272  0.325011  0.001020  0.401402
+# 1  0.980265  0.831835  0.772288  0.076485
+# 2  0.480387  0.686839  0.000575  0.746758
+# 3  0.502106  0.305142  0.768608  0.654685
+# 4  0.856602  0.171448  0.157971  0.321231
+
+print(df3.info())
+
+# <class 'pandas.core.frame.DataFrame'>
+# RangeIndex: 500 entries, 0 to 499
+# Data columns (total 4 columns):
+# a    500 non-null float64
+# b    500 non-null float64
+# c    500 non-null float64
+# d    500 non-null float64
+# dtypes: float64(4)
+# memory usage: 15.8 KB
+# None
+
+
+# Recreate this scatter plot of b vs a.
+# Note the color and size of the points.
+# Also note the figure size.
+# See if you can figure out how to stretch it in a similar fashion.
+# Remeber back to your matplotlib lecture...
+
+df3.plot.scatter(x='a', y='b', s=40, c='red', figsize=(12, 4))
+plt.show()
+
+# Create a histogram of the 'a' column.
+df3['a'].plot.hist()
+plt.show()
+
+# These plots are okay, but they don't look very polished.
+# Use style sheets to set the style to 'ggplot' and redo the histogram from above.
+# Also figure out how to add more bins to it.
+
+plt.style.use('ggplot')
+df3['a'].plot.hist(bins=40, alpha=0.5)
+plt.show()
+
+# Create a boxplot comparing the a and b columns.
+df3[['a', 'b']].plot.box()
+plt.show()
+
+# Create a kde plot of the 'd' column
+df3['d'].plot.kde(c='red')
+plt.show()
+
+# Figure out how to increase the linewidth and make the linestyle dashed.
+# (Note: You would usually not dash a kde plot line)
+df3['d'].plot.kde(lw='4', ls='--')
+plt.show()
+
+# Create an area plot of all the columns for just the rows up to 30.
+# (hint: use .ix)
+
+# df3.ix[0:30].plot.area(alpha=0.4)
+# ix is deprecated, sample using iloc instead
+df3.iloc[0:30].plot.area(alpha=0.4)
+plt.show()
+
+# Note, you may find this really hard, reference the solutions if you can't figure it out!
+# Notice how the legend in our previous figure overlapped some of actual diagram.
+# Can you figure out how to display the legend outside of the plot as shown below?
+plt.figure()
+df3.iloc[0:30].plot.area(alpha=0.4)
+plt.legend(loc='center left', bbox_to_anchor=(1.0, 0.5))
+plt.show()
