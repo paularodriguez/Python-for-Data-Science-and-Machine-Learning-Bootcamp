@@ -1,0 +1,82 @@
+import pandas as pd
+import numpy as np
+from plotly import __version__
+import cufflinks as cf
+from plotly.offline import download_plotlyjs, init_notebook_mode, plot, iplot
+import plotly.offline as py
+import matplotlib.pyplot as plt
+
+# 4.5.0
+# print(__version__)
+
+init_notebook_mode(connected=True)
+cf.go_offline()
+
+# DATA
+df = pd.DataFrame(np.random.randn(100, 4), columns='A B C D'.split())
+print(df.head())
+
+#           A         B         C         D
+# 0  0.372765  0.492421  0.69025 0 -0.175793
+# 1 -0.656771  0.347940  0.008055 -1.029682
+# 2 -2.031076  0.976888 -1.115318  0.097006
+# 3 -0.385827 -2.481291  0.547818  0.128016
+# 4 -0.956305 -1.339292 -0.854852 -0.169695
+
+df2 = pd.DataFrame({'Category': ['A', 'B', 'C'], 'Values': [32, 43, 50]})
+print(df2.head())
+
+#   Category  Values
+# 0        A      32
+# 1        B      43
+# 2        C      50
+
+# Traditional plot
+df.plot()
+plt.show()
+
+# Plotly
+# Line plot
+py.plot([{
+    'x': df.index,
+    'y': df[col],
+    'name': col
+
+} for col in df.columns], filename='01.lineplot.html')
+
+# Scatter plot
+# df.iplot(kind='scatter', x='A', y='B', mode='markers)
+
+# Bar plot
+# df2.iplot(kind='bar', x='Category', y='Values')
+
+# Aggregate dataframe to have meaningful data
+# df.sum().iplot(kind='bar')
+
+# Box plot
+# df.iplot(kind='box')
+
+# 3D surface plot
+df3 = pd.DataFrame({'x': [1, 2, 3, 4, 5], 'y': [10, 20, 30, 20, 10], 'z': [500, 400, 300, 200, 100]})
+print(df3.head())
+
+#    x   y    z
+# 0  1  10  500
+# 1  2  20  400
+# 2  3  30  300
+# 3  4  20  200
+# 4  5  10  100
+
+# df3.iplot(kind='surface', colorscale='rdylbu')
+
+# Histogram
+# df['A'].iplot(kind='hist', bins=25)
+
+# Spread plot
+df[['A', 'B']].iplot(kind='spread')
+
+# Bubble plot
+df.iplot(kind='bubble', x='A', y='B', size='C')
+
+# Scatter matrix
+# df.scatter_matrix()

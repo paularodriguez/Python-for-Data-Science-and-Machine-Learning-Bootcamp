@@ -1,0 +1,7 @@
+# Plotly: Interactive visualization library
+# Cufflinks: Connects plotly with pandas
+
+
+# Installation names: Preferences -> Project Interpreter
+# - plotly
+# - cufflinks
