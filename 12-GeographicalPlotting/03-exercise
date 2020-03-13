@@ -1,0 +1,38 @@
+import plotly.graph_objs as go
+from plotly.offline import download_plotlyjs, init_notebook_mode, plot, iplot
+
+# region
+
+# Import pandas and read the csv file: 2014_World_Power_Consumption
+import pandas as pd
+
+df = pd.read_csv('2014_World_Power_Consumption')
+
+# Check the head of the DataFrame.
+print(df.head())
+
+#          Country  Power Consumption KWH                        Text
+# 0          China           5.523000e+12     China 5,523,000,000,000
+# 1  United States           3.832000e+12    United 3,832,000,000,000
+# 2       European           2.771000e+12  European 2,771,000,000,000
+# 3         Russia           1.065000e+12    Russia 1,065,000,000,000
+# 4          Japan           9.210000e+11       Japan 921,000,000,000
+
+# Referencing the lecture notes, create a Choropleth Plot of the Power Consumption
+# for Countries using the data and layout dictionary.
+
+data_power = dict(type='choropleth',
+                  locations=df['Country'],
+                  locationmode="country names",
+                  z=df['Power Consumption KWH'],
+                  text=df['Text'],
+                  colorbar={'title': 'Power Consumption'})
+
+layout_power = dict(title='2014 World Power Consumption',
+                    geo=dict(showframe=False,
+                             projection={'type': 'mercator'}))
+
+choromap = go.Figure(data=[data_power], layout=layout_power)
+plot(choromap, filename='03.map-world-power.html')
+
+# endregion
