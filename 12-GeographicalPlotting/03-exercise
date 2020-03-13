@@ -1,15 +1,15 @@
 import plotly.graph_objs as go
 from plotly.offline import download_plotlyjs, init_notebook_mode, plot, iplot
 
-# region
+# region Exercise 1
 
 # Import pandas and read the csv file: 2014_World_Power_Consumption
 import pandas as pd
 
-df = pd.read_csv('2014_World_Power_Consumption')
+df_power = pd.read_csv('2014_World_Power_Consumption')
 
 # Check the head of the DataFrame.
-print(df.head())
+print(df_power.head())
 
 #          Country  Power Consumption KWH                        Text
 # 0          China           5.523000e+12     China 5,523,000,000,000
@@ -22,10 +22,10 @@ print(df.head())
 # for Countries using the data and layout dictionary.
 
 data_power = dict(type='choropleth',
-                  locations=df['Country'],
+                  locations=df_power['Country'],
                   locationmode="country names",
-                  z=df['Power Consumption KWH'],
-                  text=df['Text'],
+                  z=df_power['Power Consumption KWH'],
+                  text=df_power['Text'],
                   colorbar={'title': 'Power Consumption'})
 
 layout_power = dict(title='2014 World Power Consumption',
@@ -34,5 +34,44 @@ layout_power = dict(title='2014 World Power Consumption',
 
 choromap = go.Figure(data=[data_power], layout=layout_power)
 plot(choromap, filename='03.map-world-power.html')
+
+# endregion
+
+# region Exercise 2
+
+# Import the 2012_Election_Data csv file using pandas.
+
+df_election = pd.read_csv('2012_Election_Data')
+
+# Check the head of the DataFrame.
+
+print(df_election.head())
+
+#    Year  ICPSR State Code  ...  Total Ineligible Felon State Abv
+# 0  2012                41  ...                  71,584        AL
+# 1  2012                81  ...                  11,317        AK
+# 2  2012                61  ...                  81,048        AZ
+# 3  2012                42  ...                  53,808        AR
+# 4  2012                71  ...                 208,742        CA
+
+
+# Now create a plot that displays the Voting-Age Population (VAP) per state.
+# If you later want to play around with other columns, make sure you consider their data type.
+# VAP has already been transformed to a float for you
+
+data_elections = dict(type='choropleth',
+                      locations=df_election['State Abv'],
+                      locationmode='USA-states',
+                      z=df_election['Voting-Age Population (VAP)'],
+                      text=df_election['State'],
+                      colorbar={'title': 'Voting-Age Population (VAP)'})
+
+layout_elections = dict(title='2012 Voting-Age Population',
+                        geo=dict(scope='usa',
+                                 showlakes=True,
+                                 lakecolor='rgb(85,173,240)'))
+
+choromap_elections = go.Figure(data=[data_elections], layout=layout_elections)
+plot(choromap_elections, filename='03.map-world-elections.html')
 
 # endregion
