@@ -1,0 +1,199 @@
+# Just a quick note, in Late September 2016, SciKit Learn 0.18 was released and there was a slight change to the code. With 0.18 the train_test_split function is now imported from model_selection instead of cross_validation. This is already reflected in the latest notes, but the videos show the older method. You can still use the older method, you'll just get a warning message notifying you of the change. So for short, the statement:
+#
+# from sklearn.cross_validation import train_test_split
+#
+# has been changed to :
+#
+# from sklearn.model_selection import train_test_split
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+
+def separator():
+    print('-' * 20)
+
+
+desired_width = 320
+pd.set_option('display.width', desired_width)
+pd.set_option('display.max_columns', 100)
+
+df = pd.read_csv('USA_Housing.csv')
+print(df.head())
+
+#    Avg. Area Income  Avg. Area House Age  Avg. Area Number of Rooms  Avg. Area Number of Bedrooms  Area Population         Price                                            Address
+# 0      79545.458574             5.682861                   7.009188                          4.09     23086.800503  1.059034e+06  208 Michael Ferry Apt. 674\nLaurabury, NE 3701...
+# 1      79248.642455             6.002900                   6.730821                          3.09     40173.072174  1.505891e+06  188 Johnson Views Suite 079\nLake Kathleen, CA...
+# 2      61287.067179             5.865890                   8.512727                          5.13     36882.159400  1.058988e+06  9127 Elizabeth Stravenue\nDanieltown, WI 06482...
+# 3      63345.240046             7.188236                   5.586729                          3.26     34310.242831  1.260617e+06                          USS Barnett\nFPO AP 44820
+# 4      59982.197226             5.040555                   7.839388                          4.23     26354.109472  6.309435e+05                         USNS Raymond\nFPO AE 09386
+
+separator()
+
+print(df.info())
+
+# <class 'pandas.core.frame.DataFrame'>
+# RangeIndex: 5000 entries, 0 to 4999
+# Data columns (total 7 columns):
+# Avg. Area Income                5000 non-null float64
+# Avg. Area House Age             5000 non-null float64
+# Avg. Area Number of Rooms       5000 non-null float64
+# Avg. Area Number of Bedrooms    5000 non-null float64
+# Area Population                 5000 non-null float64
+# Price                           5000 non-null float64
+# Address                         5000 non-null object
+# dtypes: float64(6), object(1)
+# memory usage: 273.6+ KB
+# None
+
+print(df.describe())
+
+#           Avg. Area Income  Avg. Area House Age  Avg. Area Number of Rooms  Avg. Area Number of Bedrooms  Area Population         Price
+# count       5000.000000          5000.000000                5000.000000                   5000.000000      5000.000000  5.000000e+03
+# mean       68583.108984             5.977222                   6.987792                      3.981330     36163.516039  1.232073e+06
+# std        10657.991214             0.991456                   1.005833                      1.234137      9925.650114  3.531176e+05
+# min        17796.631190             2.644304                   3.236194                      2.000000       172.610686  1.593866e+04
+# 25%        61480.562388             5.322283                   6.299250                      3.140000     29403.928702  9.975771e+05
+# 50%        68804.286404             5.970429                   7.002902                      4.050000     36199.406689  1.232669e+06
+# 75%        75783.338666             6.650808                   7.665871                      4.490000     42861.290769  1.471210e+06
+# max       107701.748378             9.519088                  10.759588                      6.500000     69621.713378  2.469066e+06
+
+sns.pairplot(df)
+plt.show()
+
+sns.distplot(df['Price'])
+plt.show()
+
+sns.heatmap(df.corr(), annot=True)
+plt.show()
+
+# Step 1: Split the array
+
+print(df.columns)
+# Index(['Avg. Area Income', 'Avg. Area House Age', 'Avg. Area Number of Rooms', 'Avg. Area Number of Bedrooms', 'Area Population', 'Price', 'Address'], dtype='object')
+
+X = df[['Avg. Area Income', 'Avg. Area House Age', 'Avg. Area Number of Rooms', 'Avg. Area Number of Bedrooms',
+        'Area Population']]
+y = df['Price']
+
+separator()
+
+from sklearn.model_selection import train_test_split
+
+# test size: percentage of the dataset that will take part to the test array
+# random_states makes random splits in the data
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, random_state=101)
+print(X_train.head())
+#       Avg. Area Income  Avg. Area House Age  Avg. Area Number of Rooms  Avg. Area Number of Bedrooms  Area Population
+# 1303      68091.179676             5.364208                   7.502956                          3.10     44557.379656
+# 1051      75729.765546             5.580599                   7.642973                          4.21     29996.018448
+# 4904      70885.420819             6.358747                   7.250241                          5.42     38627.301473
+# 931       73386.407340             4.966360                   7.915453                          4.30     38413.490484
+# 4976      75046.313791             5.351169                   7.797825                          5.23     34107.888619
+
+print(X_test.head())
+#       Avg. Area Income  Avg. Area House Age  Avg. Area Number of Rooms  Avg. Area Number of Bedrooms  Area Population
+# 1718      66774.995817             5.717143                   7.795215                          4.32     36788.980327
+# 2511      62184.539375             4.925758                   7.427689                          6.22     26008.309124
+# 345       73643.057298             6.766853                   8.337085                          3.34     43152.139577
+# 2521      61909.041438             6.228343                   6.593138                          4.29     28953.925377
+# 54        72942.705059             4.786222                   7.319886                          6.41     24377.909049
+
+print(y_train.head())
+
+# 1303    1.489648e+06
+# 1051    1.183015e+06
+# 4904    1.547889e+06
+# 931     1.186442e+06
+# 4976    1.340344e+06
+# Name: Price, dtype: float64
+
+print(y_test.head())
+
+# 1718    1.251689e+06
+# 2511    8.730483e+05
+# 345     1.696978e+06
+# 2521    1.063964e+06
+# 54      9.487883e+05
+# Name: Price, dtype: float64
+
+separator()
+
+# Step 2: Create and train the model
+
+# import linear regression model
+from sklearn.linear_model import LinearRegression
+
+# create one instance of the model
+lm = LinearRegression()
+
+# train the model
+lm.fit(X_train, y_train)
+
+print(lm.intercept_)
+# -2640159.796853739
+
+# The coefficients are going to relate to each feature of the dataset: 'Avg. Area Income',
+# 'Avg. Area House Age', 'Avg. Area Number of Rooms', 'Avg. Area Number of Bedrooms',
+# 'Area Population'
+print(lm.coef_)
+
+# [2.15282755e+01 1.64883282e+05 1.22368678e+05 2.23380186e+03
+#  1.51504200e+01]
+
+# We create a dataframe to store the coefficients
+cdf = pd.DataFrame(lm.coef_, X.columns, columns=['Coeff'])
+print(cdf)
+
+#                                       Coeff
+# Avg. Area Income                  21.528276
+# Avg. Area House Age           164883.282027
+# Avg. Area Number of Rooms     122368.678027
+# Avg. Area Number of Bedrooms    2233.801864
+# Area Population                   15.150420
+
+# Previous data means that, for example, one unit increase in average area income
+# is associated with an increase of $21.52 in price
+
+separator()
+
+# Sample with boston data
+from sklearn.datasets import load_boston
+
+boston = load_boston()
+print(boston.keys())
+
+# dict_keys(['data', 'target', 'feature_names', 'DESCR', 'filename'])
+
+print(boston['DESCR'])
+
+# **Data Set Characteristics:**
+#
+#     :Number of Instances: 506
+#
+#     :Number of Attributes: 13 numeric/categorical predictive. Median Value (attribute 14) is usually the target.
+#
+#     :Attribute Information (in order):
+#         - CRIM     per capita crime rate by town
+#         - ZN       proportion of residential land zoned for lots over 25,000 sq.ft.
+#         - INDUS    proportion of non-retail business acres per town
+#         - CHAS     Charles River dummy variable (= 1 if tract bounds river; 0 otherwise)
+#         - NOX      nitric oxides concentration (parts per 10 million)
+#         - RM       average number of rooms per dwelling
+#         - AGE      proportion of owner-occupied units built prior to 1940
+#         - DIS      weighted distances to five Boston employment centres
+#         - RAD      index of accessibility to radial highways
+#         - TAX      full-value property-tax rate per $10,000
+#         - PTRATIO  pupil-teacher ratio by town
+#         - B        1000(Bk - 0.63)^2 where Bk is the proportion of blacks by town
+#         - LSTAT    % lower status of the population
+#         - MEDV     Median value of owner-occupied homes in $1000's
+#
+#     :Missing Attribute Values: None
+#
+#     :Creator: Harrison, D. and Rubinfeld, D.L.
+#
+# This is a copy of UCI ML housing dataset.
+# https://archive.ics.uci.edu/ml/machine-learning-databases/housing/
