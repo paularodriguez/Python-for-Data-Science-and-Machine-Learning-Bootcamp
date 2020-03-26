@@ -197,3 +197,58 @@ print(boston['DESCR'])
 #
 # This is a copy of UCI ML housing dataset.
 # https://archive.ics.uci.edu/ml/machine-learning-databases/housing/
+
+separator()
+
+# Step 3: Make a prediction
+# Predictions: Use the trained model to predict
+
+predictions = lm.predict(X_test)
+print(predictions)
+
+# Predicted prices of the houses
+
+# [1260960.70567629  827588.75560301 1742421.24254363 ...  372191.40626868
+#  1365217.15140901 1914519.54178955]
+
+# Now, we want to now how far are predictions to real prices (y_test)
+
+# Create one scatter plot to see real data over predictions
+plt.scatter(y_test, predictions)
+plt.show()
+
+# Distribution plot: Histogram that shows the residuals (difference between predictions and real data)
+# distribution
+sns.distplot((y_test - predictions))
+plt.show()
+
+# 05.predictions_distplot_residuals.png
+
+# If we take a look to the result plot (05.predictions_distplot_residuals.png), we see
+# that our residuals are normally distributed -> Good sign -> Good model
+
+separator()
+
+# Step 4: Evaluate the results
+
+# Mean Absolute Error (MAE) is the mean of the absolute value of the errors
+# Mean Squared Error (MSE) is the mean of the squared errors
+# Root Mean Squared Error (RMSE) is the square root of the mean of the squared errors
+
+# Comparing these metrics:
+
+# MAE is the easiest to understand, because it's the average error.
+# MSE is more popular than MAE, because MSE "punishes" larger errors, which tends to be useful in the real world.
+# RMSE is even more popular than MSE, because RMSE is interpretable in the "y" units.
+
+# All of these are loss functions, because we want to minimize them.
+
+from sklearn import metrics
+
+print("MAE: ", metrics.mean_absolute_error(y_test, predictions))
+print("MSE: ", metrics.mean_squared_error(y_test, predictions))
+print("RMSE: ", np.sqrt(metrics.mean_squared_error(y_test, predictions)))
+
+# MAE:  82288.22251914928
+# MSE:  10460958907.208244
+# RMSE:  102278.82922290538
