@@ -1,0 +1,6 @@
+# The bias-variance trade-off is the point where we are adding just noise by adding
+# model complexity (flexibility)
+
+# The training error goes down but the test error starts to go up
+
+# The model begins to overfit
