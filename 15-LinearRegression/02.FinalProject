@@ -102,3 +102,106 @@ plt.show()
 
 sns.lmplot(x='Yearly Amount Spent', y='Length of Membership', data=customers)
 plt.show()
+
+## Training and Testing Data
+
+# Now that we've explored the data a bit, let's go ahead and split the data
+# into training and testing sets.
+# Set a variable X equal to the numerical features of the customers and
+# a variable y equal to the "Yearly Amount Spent" column.
+
+print(customers.columns)
+
+# Index(['Email', 'Address', 'Avatar', 'Avg. Session Length', 'Time on App', 'Time on Website', 'Length of Membership', 'Yearly Amount Spent'], dtype='object')
+
+X = customers[['Avg. Session Length', 'Time on App', 'Time on Website', 'Length of Membership']]
+y = customers['Yearly Amount Spent']
+
+# Use model_selection.train_test_split from sklearn to split the data into training and testing sets.
+# Set test_size=0.3 and random_state=101
+
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn import metrics
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=101)
+
+# Create an instance of a LinearRegression() model named lm.
+# Train/fit lm on the training data
+
+lm = LinearRegression()
+lm.fit(X_train, y_train)
+
+# Print out the coefficients of the model
+
+print(lm.coef_)
+
+# [25.98154972 38.59015875  0.19040528 61.27909654]
+separator()
+
+## Predicting Test Data
+# Now that we have fit our model, let's evaluate its performance by predicting off the test values!
+
+predictions = lm.predict(X_test)
+
+# Create a scatterplot of the real test values versus the predicted values
+
+plt.scatter(y_test, predictions)
+plt.xlabel('Y Test')
+plt.ylabel('Predicted Y')
+plt.show()
+
+# File: 06.scatter-predictions
+
+# Evaluating the Model
+
+# Let's evaluate our model performance by calculating the residual sum of squares
+# and the explained variance score (R^2).
+
+# Calculate the Mean Absolute Error, Mean Squared Error, and the Root Mean Squared Error.
+# Refer to the lecture or to Wikipedia for the formulas
+
+print("MAE: ", metrics.mean_absolute_error(y_test, predictions))
+print("MSE: ", metrics.mean_squared_error(y_test, predictions))
+print("RMSE: ", np.sqrt(metrics.mean_squared_error(y_test, predictions)))
+
+# MAE:  7.2281486534308295
+# MSE:  79.8130516509743
+# RMSE:  8.933815066978626
+
+## Residuals
+# You should have gotten a very good model with a good fit.
+# Let's quickly explore the residuals to make sure everything was okay with our data.
+
+# Plot a histogram of the residuals and make sure it looks normally distributed.
+# Use either seaborn distplot, or just plt.hist().
+
+sns.distplot((y_test - predictions))
+plt.show()
+
+## Conclusion
+# We still want to figure out the answer to the original question,
+# do we focus our efforst on mobile app or website development?
+# Or maybe that doesn't even really matter, and Membership Time
+# is what is really important.
+# Let's see if we can interpret the coefficients at all to get an idea.
+
+# Recreate the dataframe below
+
+cdf = pd.DataFrame(lm.coef_, X.columns, columns=['Coeff'])
+print(cdf)
+
+#                           Coeff
+# Avg. Session Length   25.981550
+# Time on App           38.590159
+# Time on Website        0.190405
+# Length of Membership  61.279097
+
+# + 1 Avg. Session Length -> +$25.981550
+# + 1 Time on App -> +$38.590159
+# + 1 Time on Website -> +$0.190405
+# + 1 Length of Membership -> +$61.279097
+
+
+# **Do you think the company should focus more on their mobile app or on their website?
+# - Mobile App
