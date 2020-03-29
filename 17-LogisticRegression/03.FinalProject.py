@@ -99,7 +99,7 @@ plt.show()
 
 # Create a jointplot of 'Daily Time Spent on Site' vs. 'Daily Internet Usage
 
-sns.jointplot(ad_data['Daily Internet Usage'], ad_data['Daily Time Spent on Site'], color='green')
+sns.jointplot(ad_data['Daily Time Spent on Site'], ad_data['Daily Internet Usage'], color='green')
 plt.show()
 
 # Finally, create a pairplot with the hue defined by the 'Clicked on Ad' column feature
@@ -143,8 +143,7 @@ predictions = logmodel.predict(X_test)
 
 # Create a classification report for the model
 
-from sklearn.metrics import confusion_matrix
-from sklearn.metrics import classification_report
+from sklearn.metrics import confusion_matrix, classification_report
 
 print(confusion_matrix(y_test, predictions))
 # [[149   8]
