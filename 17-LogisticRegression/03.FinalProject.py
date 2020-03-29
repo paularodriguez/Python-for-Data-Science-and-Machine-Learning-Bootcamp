@@ -107,3 +107,56 @@ plt.show()
 # sns.pairplot(ad_data, hue='Clicked on Ad') -> numpy issue
 sns.pairplot(ad_data)
 plt.show()
+
+
+##  Regression
+
+# Now it's time to do a train test split, and train our model!
+# You'll have the freedom here to choose columns that you want to train on!
+
+# Split the data into training set and testing set using train_test_split
+
+from sklearn.model_selection import train_test_split
+
+print(ad_data.columns)
+
+# Index(['Daily Time Spent on Site', 'Age', 'Area Income', 'Daily Internet Usage', 'Ad Topic Line', 'City', 'Male', 'Country', 'Timestamp', 'Clicked on Ad'], dtype='object')
+separator()
+
+X = ad_data[['Daily Time Spent on Site', 'Age', 'Area Income', 'Daily Internet Usage', 'Male']]
+y = ad_data['Clicked on Ad']
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=101)
+
+# Train and fit a logistic regression model on the training set.
+
+from sklearn.linear_model import LogisticRegression
+
+logmodel = LogisticRegression()
+logmodel.fit(X_train, y_train)
+
+## Predictions and Evaluations
+
+# Now predict values for the testing data
+
+predictions = logmodel.predict(X_test)
+
+# Create a classification report for the model
+
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import classification_report
+
+print(confusion_matrix(y_test, predictions))
+# [[149   8]
+#  [ 14 129]]
+
+print(classification_report(y_test, predictions))
+
+#               precision    recall  f1-score   support
+#
+#            0       0.91      0.95      0.93       157
+#            1       0.94      0.90      0.92       143
+#
+#     accuracy                           0.93       300
+#    macro avg       0.93      0.93      0.93       300
+# weighted avg       0.93      0.93      0.93       300
