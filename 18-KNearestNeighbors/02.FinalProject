@@ -1,0 +1,77 @@
+## Import Libraries
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Utils to see all dataframe columns
+desired_width = 320
+pd.set_option('display.width', desired_width)
+pd.set_option('display.max_columns', 100)
+
+
+def separator():
+    print('-' * 20)
+
+
+# Read the 'KNN_Project_Data csv file into a dataframe
+
+df = pd.read_csv('KNN_Project_Data')
+
+# Check the head of the dataframe
+
+print(df.head())
+
+#           XVPM         GWYH         TRAT        TLLZ         IGGA         HYKR         EDFS        GUUB         MGJM         JHZC  TARGET CLASS
+# 0  1636.670614   817.988525  2565.995189  358.347163   550.417491  1618.870897  2147.641254  330.727893  1494.878631   845.136088             0
+# 1  1013.402760   577.587332  2644.141273  280.428203  1161.873391  2084.107872   853.404981  447.157619  1193.032521   861.081809             1
+# 2  1300.035501   820.518697  2025.854469  525.562292   922.206261  2552.355407   818.676686  845.491492  1968.367513  1647.186291             1
+# 3  1059.347542  1066.866418   612.000041  480.827789   419.467495   685.666983   852.867810  341.664784  1154.391368  1450.935357             0
+# 4  1018.340526  1313.679056   950.622661  724.742174   843.065903  1370.554164   905.469453  658.118202   539.459350  1899.850792             0
+
+separator()
+
+# Since this data is artificial, we'll just do a large pairplot with seaborn.
+# Use seaborn on the dataframe to create a pairplot with the hue indicated by the TARGET CLASS column.
+
+# sns.pairplot(df, hue='TARGET CLASS')
+sns.pairplot(df)
+plt.show()
+
+# Standardize the Variables
+
+# Import StandardScaler from Scikit learn.
+# Create a StandardScaler() object called scaler.
+# Fit scaler to the features.
+
+from sklearn.preprocessing import StandardScaler
+
+scaler = StandardScaler()
+scaler.fit(df.drop('TARGET CLASS', axis=1))
+
+# Use the .transform() method to transform the features to a scaled version
+scaled_features = scaler.transform(df.drop('TARGET CLASS', axis=1))
+print(scaled_features)
+
+# [[ 1.56852168 -0.44343461  1.61980773 ... -0.93279392  1.00831307
+#   -1.06962723]
+#  [-0.11237594 -1.05657361  1.7419175  ... -0.46186435  0.25832069
+#   -1.04154625]
+#  [ 0.66064691 -0.43698145  0.77579285 ...  1.14929806  2.1847836
+#    0.34281129]
+
+separator()
+
+# Convert the scaled features to a dataframe and check the head of this dataframe to make sure the scaling worked.
+
+df_feat = pd.DataFrame(scaled_features, columns=df.columns[:-1])
+print(df_feat.head())
+separator()
+
+#        XVPM      GWYH      TRAT      TLLZ      IGGA      HYKR      EDFS      GUUB      MGJM      JHZC
+# 0  1.568522 -0.443435  1.619808 -0.958255 -1.128481  0.138336  0.980493 -0.932794  1.008313 -1.069627
+# 1 -0.112376 -1.056574  1.741918 -1.504220  0.640009  1.081552 -1.182663 -0.461864  0.258321 -1.041546
+# 2  0.660647 -0.436981  0.775793  0.213394 -0.053171  2.030872 -1.240707  1.149298  2.184784  0.342811
+# 3  0.011533  0.191324 -1.433473 -0.100053 -1.507223 -1.753632 -1.183561 -0.888557  0.162310 -0.002793
+# 4 -0.099059  0.820815 -0.904346  1.609015 -0.282065 -0.365099 -1.095644  0.391419 -1.365603  0.787762
