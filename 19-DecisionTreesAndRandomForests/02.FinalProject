@@ -234,3 +234,42 @@ print(confusion_matrix(y_test, predictions))
 
 # [[2006  425]
 #  [ 346   97]]
+
+separator()
+
+## Training the Random Forest model
+# Now its time to train our model!
+# Create an instance of the RandomForestClassifier class and fit it to our training data from the previous step.
+
+from sklearn.ensemble import RandomForestClassifier
+
+rfc = RandomForestClassifier(n_estimators=200)
+rfc.fit(X_train, y_train)
+
+# Predictions and Evaluation
+# Let's predict off the y_test values and evaluate our model.
+# ** Predict the class of not.fully.paid for the X_test data.
+
+rfc_predictions = rfc.predict(X_test)
+
+print(classification_report(y_test, rfc_predictions))
+#               precision    recall  f1-score   support
+#
+#            0       0.85      1.00      0.92      2431
+#            1       0.53      0.02      0.04       443
+#
+#     accuracy                           0.85      2874
+#    macro avg       0.69      0.51      0.48      2874
+# weighted avg       0.80      0.85      0.78      2874
+
+
+print(confusion_matrix(y_test, rfc_predictions))
+
+# [[2422    9]
+#  [ 433   10]]
+
+# What performed better the random forest or the decision tree?
+
+# Depends what metric you are trying to optimize for.
+# Notice the recall for each class for the models.
+# Neither did very well, more feature engineering is needed.
