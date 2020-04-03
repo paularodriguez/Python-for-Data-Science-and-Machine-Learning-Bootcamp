@@ -45,8 +45,8 @@ iris = sns.load_dataset('iris')
 
 # Create a pairplot of the data set. Which flower species seems to be the most separable?
 
-# sns.pairplot(iris, hue='species')
-# plt.show()
+sns.pairplot(iris, hue='species')
+plt.show()
 
 # setosa seems most separable
 
@@ -54,8 +54,8 @@ iris = sns.load_dataset('iris')
 
 setosa = iris[iris['species'] == 'setosa']
 
-# sns.jointplot(x='sepal_width', y='sepal_length', data=setosa, kind='kde', color='red')
-# plt.show()
+sns.jointplot(x='sepal_width', y='sepal_length', data=setosa, kind='kde', color='red')
+plt.show()
 
 # Train Test Split
 # Split your data into a training set and a testing set.
@@ -97,6 +97,48 @@ print(classification_report(y_test, predictions))
 
 
 print(confusion_matrix(y_test, predictions))
+
+# [[13  0  0]
+#  [ 0 19  1]
+#  [ 0  0 12]]
+
+
+# Gridsearch Practice
+# Import GridsearchCV from SciKit Learn
+
+from sklearn.model_selection import GridSearchCV
+
+# Create a dictionary called param_grid and fill out some parameters for C and gamma.
+
+param_grid = {
+    'C': [0.1, 1, 10, 100, 1000],
+    'gamma': [1, 0.1, 0.01, 0.001, 0.0001]
+}
+
+# Create a GridSearchCV object and fit it to the training data
+
+grid = GridSearchCV(SVC(), param_grid, verbose=3)
+grid.fit(X_train, y_train)
+
+# Now take that grid model and create some predictions using the test set and
+# create classification reports and confusion matrices for them. Were you able to improve?
+
+grid_predictions = grid.predict(X_test)
+
+from sklearn.metrics import classification_report, confusion_matrix
+
+print(classification_report(y_test, grid_predictions))
+#               precision    recall  f1-score   support
+#
+#       setosa       1.00      1.00      1.00        13
+#   versicolor       1.00      0.95      0.97        20
+#    virginica       0.92      1.00      0.96        12
+#
+#     accuracy                           0.98        45
+#    macro avg       0.97      0.98      0.98        45
+# weighted avg       0.98      0.98      0.98        45
+
+print(confusion_matrix(y_test, grid_predictions))
 
 # [[13  0  0]
 #  [ 0 19  1]
