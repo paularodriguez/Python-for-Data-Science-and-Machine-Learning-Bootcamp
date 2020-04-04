@@ -1,0 +1,138 @@
+# K Means Clustering Project
+# For this project we will attempt to use KMeans Clustering to cluster Universities
+# into to two groups, Private and Public.
+
+# It is very important to note, we actually have the labels for this data set,
+# but we will NOT use them for the KMeans clustering algorithm,
+# since that is an unsupervised learning algorithm.
+
+# When using the Kmeans algorithm under normal circumstances, it is because you don't have labels.
+# In this case we will use the labels to try to get an idea of how well the algorithm performed,
+# but you won't usually do this for Kmeans, so the classification report
+# and confusion matrix at the end of this project, don't truly make sense in a real world setting!.
+
+## The Data
+
+# We will use a data frame with 777 observations on the following 18 variables.
+# * Private A factor with levels No and Yes indicating private or public university
+# * Apps Number of applications received
+# * Accept Number of applications accepted
+# * Enroll Number of new students enrolled
+# * Top10perc Pct. new students from top 10% of H.S. class
+# * Top25perc Pct. new students from top 25% of H.S. class
+# * F.Undergrad Number of fulltime undergraduates
+# * P.Undergrad Number of parttime undergraduates
+# * Outstate Out-of-state tuition
+# * Room.Board Room and board costs
+# * Books Estimated book costs
+# * Personal Estimated personal spending
+# * PhD Pct. of faculty with Ph.D.’s
+# * Terminal Pct. of faculty with terminal degree
+# * S.F.Ratio Student/faculty ratio
+# * perc.alumni Pct. alumni who donate
+# * Expend Instructional expenditure per student
+# * Grad.Rate Graduation rate
+
+# Import the libraries you usually use for data analysis.
+
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Read in the College_Data file using read_csv. Figure out how to set the first column as the index
+
+data = pd.read_csv('College_Data')
+
+print(data.head())
+
+#                      Unnamed: 0 Private  Apps  ...  perc.alumni  Expend  Grad.Rate
+# 0  Abilene Christian University     Yes  1660  ...           12    7041         60
+# 1            Adelphi University     Yes  2186  ...           16   10527         56
+# 2                Adrian College     Yes  1428  ...           30    8735         54
+# 3           Agnes Scott College     Yes   417  ...           37   19016         59
+# 4     Alaska Pacific University     Yes   193  ...            2   10922         15
+
+print(data.info())
+
+# <class 'pandas.core.frame.DataFrame'>
+# RangeIndex: 777 entries, 0 to 776
+# Data columns (total 19 columns):
+# Unnamed: 0     777 non-null object
+# Private        777 non-null object
+# Apps           777 non-null int64
+# Accept         777 non-null int64
+# Enroll         777 non-null int64
+# Top10perc      777 non-null int64
+# Top25perc      777 non-null int64
+# F.Undergrad    777 non-null int64
+# P.Undergrad    777 non-null int64
+# Outstate       777 non-null int64
+# Room.Board     777 non-null int64
+# Books          777 non-null int64
+# Personal       777 non-null int64
+# PhD            777 non-null int64
+# Terminal       777 non-null int64
+# S.F.Ratio      777 non-null float64
+# perc.alumni    777 non-null int64
+# Expend         777 non-null int64
+# Grad.Rate      777 non-null int64
+# dtypes: float64(1), int64(16), object(2)
+# memory usage: 115.5+ KB
+# None
+
+print(data.describe())
+
+#                Apps        Accept  ...        Expend  Grad.Rate
+# count    777.000000    777.000000  ...    777.000000  777.00000
+# mean    3001.638353   2018.804376  ...   9660.171171   65.46332
+# std     3870.201484   2451.113971  ...   5221.768440   17.17771
+# min       81.000000     72.000000  ...   3186.000000   10.00000
+# 25%      776.000000    604.000000  ...   6751.000000   53.00000
+# 50%     1558.000000   1110.000000  ...   8377.000000   65.00000
+# 75%     3624.000000   2424.000000  ...  10830.000000   78.00000
+# max    48094.000000  26330.000000  ...  56233.000000  118.00000
+
+
+# Create a scatterplot of Grad.Rate versus Room.Board where the points are colored by the Private column.
+
+sns.scatterplot(x='Room.Board', y='Grad.Rate', data=data, hue='Private')
+plt.show()
+
+# Create a scatterplot of F.Undergrad versus Outstate where the points are colored by the Private column
+
+sns.scatterplot(x='Outstate', y='F.Undergrad', data=data, hue='Private')
+plt.show()
+
+# Create a stacked histogram showing Out of State Tuition based on the Private column.
+# Try doing this using [sns.FacetGrid](https://stanford.edu/~mwaskom/software/seaborn/generated/seaborn.FacetGrid.html).
+# If that is too tricky, see if you can do it just by using two instances of pandas.plot(kind='hist').
+
+sns.set_style('darkgrid')
+g = sns.FacetGrid(data,hue="Private",palette='coolwarm',size=6,aspect=2)
+g = g.map(plt.hist,'Outstate',bins=20,alpha=0.7)
+plt.show()
+
+# Create a similar histogram for the Grad.Rate column.
+
+sns.set_style('darkgrid')
+g = sns.FacetGrid(data,hue="Private",palette='coolwarm',size=6,aspect=2)
+g = g.map(plt.hist,'Grad.Rate',bins=20,alpha=0.7)
+plt.show()
+
+
+# Notice how there seems to be a private school with a graduation rate of higher than 100%.
+# What is the name of that school?
+
+print(data[data['Grad.Rate'] > 100])
+
+#            Unnamed: 0 Private  Apps  ...  perc.alumni  Expend  Grad.Rate
+# 95  Cazenovia College     Yes  3847  ...           20    7697        118
+
+# Set that school's graduation rate to 100 so it makes sense.
+# You may get a warning not an error) when doing this operation, so use dataframe operations or just re-do
+# the histogram visualization to make sure it actually went through.
+
+data['Grad.Rate']['Cazenovia College'] = 100
+print(data[data['Grad.Rate'] > 100])
+
