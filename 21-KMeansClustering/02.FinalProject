@@ -42,23 +42,22 @@ import matplotlib.pyplot as plt
 
 # Read in the College_Data file using read_csv. Figure out how to set the first column as the index
 
-data = pd.read_csv('College_Data')
+data = pd.read_csv('College_Data', index_col=0)
 
 print(data.head())
 
-#                      Unnamed: 0 Private  Apps  ...  perc.alumni  Expend  Grad.Rate
-# 0  Abilene Christian University     Yes  1660  ...           12    7041         60
-# 1            Adelphi University     Yes  2186  ...           16   10527         56
-# 2                Adrian College     Yes  1428  ...           30    8735         54
-# 3           Agnes Scott College     Yes   417  ...           37   19016         59
-# 4     Alaska Pacific University     Yes   193  ...            2   10922         15
+#                              Private  Apps  ...  Expend  Grad.Rate
+# Abilene Christian University     Yes  1660  ...    7041         60
+# Adelphi University               Yes  2186  ...   10527         56
+# Adrian College                   Yes  1428  ...    8735         54
+# Agnes Scott College              Yes   417  ...   19016         59
+# Alaska Pacific University        Yes   193  ...   10922         15
 
 print(data.info())
 
 # <class 'pandas.core.frame.DataFrame'>
-# RangeIndex: 777 entries, 0 to 776
-# Data columns (total 19 columns):
-# Unnamed: 0     777 non-null object
+# Index: 777 entries, Abilene Christian University to York College of Pennsylvania
+# Data columns (total 18 columns):
 # Private        777 non-null object
 # Apps           777 non-null int64
 # Accept         777 non-null int64
@@ -77,8 +76,8 @@ print(data.info())
 # perc.alumni    777 non-null int64
 # Expend         777 non-null int64
 # Grad.Rate      777 non-null int64
-# dtypes: float64(1), int64(16), object(2)
-# memory usage: 115.5+ KB
+# dtypes: float64(1), int64(16), object(1)
+# memory usage: 115.3+ KB
 # None
 
 print(data.describe())
@@ -125,8 +124,8 @@ plt.show()
 
 print(data[data['Grad.Rate'] > 100])
 
-#            Unnamed: 0 Private  Apps  ...  perc.alumni  Expend  Grad.Rate
-# 95  Cazenovia College     Yes  3847  ...           20    7697        118
+#                   Private  Apps  Accept  ...  perc.alumni  Expend  Grad.Rate
+# Cazenovia College     Yes  3847    3433  ...           20    7697        118
 
 # Set that school's graduation rate to 100 so it makes sense.
 # You may get a warning not an error) when doing this operation, so use dataframe operations or just re-do
@@ -145,14 +144,11 @@ from sklearn.cluster import KMeans
 kmeans = KMeans(n_clusters=2)
 
 # Fit the model to all the data except for the Private label
-df = data.drop('Private', axis=1)
-kmeans.fit(df.drop('Unnamed: 0', axis=1))
+kmeans.fit(data.drop('Private', axis=1))
 
 # What are the cluster center vectors?
 print(kmeans.cluster_centers_)
 
-
-# [1 rows x 19 columns]
 # [[1.03631389e+04 6.55089815e+03 2.56972222e+03 4.14907407e+01
 #   7.02037037e+01 1.30619352e+04 2.46486111e+03 1.07191759e+04
 #   4.64347222e+03 5.95212963e+02 1.71420370e+03 8.63981481e+01
@@ -162,7 +158,7 @@ print(kmeans.cluster_centers_)
 #   5.34708520e+01 2.18854858e+03 5.95458894e+02 1.03957085e+04
 #   4.31136472e+03 5.41982063e+02 1.28033632e+03 7.04424514e+01
 #   7.78251121e+01 1.40997010e+01 2.31748879e+01 8.93204634e+03
-#   6.51195815e+01]]
+#   6.50926756e+01]]
 
 # Evaluation
 # There is no perfect way to evaluate clustering if you don't have the labels,
@@ -182,12 +178,12 @@ data['Cluster'] = data['Private'].apply(converter)
 
 print(data.head())
 
-#                      Unnamed: 0 Private  Apps  ...  Expend  Grad.Rate  Cluster
-# 0  Abilene Christian University     Yes  1660  ...    7041         60        1
-# 1            Adelphi University     Yes  2186  ...   10527         56        1
-# 2                Adrian College     Yes  1428  ...    8735         54        1
-# 3           Agnes Scott College     Yes   417  ...   19016         59        1
-# 4     Alaska Pacific University     Yes   193  ...   10922         15        1
+#                              Private  Apps  Accept  ...  Expend  Grad.Rate  Cluster
+# Abilene Christian University     Yes  1660    1232  ...    7041         60        1
+# Adelphi University               Yes  2186    1924  ...   10527         56        1
+# Adrian College                   Yes  1428    1097  ...    8735         54        1
+# Agnes Scott College              Yes   417     349  ...   19016         59        1
+# Alaska Pacific University        Yes   193     146  ...   10922         15        1
 
 # Create a confusion matrix and classification report to see how well the Kmeans
 # clustering worked without being given any labels.
@@ -196,16 +192,16 @@ from sklearn.metrics import confusion_matrix, classification_report
 
 print(confusion_matrix(data['Cluster'], kmeans.labels_))
 
-# [[138  74]
-#  [531  34]]
+# [[ 74 138]
+#  [ 34 531]]
 
 print(classification_report(data['Cluster'], kmeans.labels_))
 
 #               precision    recall  f1-score   support
 #
-#            0       0.21      0.65      0.31       212
-#            1       0.31      0.06      0.10       565
+#            0       0.69      0.35      0.46       212
+#            1       0.79      0.94      0.86       565
 #
-#     accuracy                           0.22       777
-#    macro avg       0.26      0.36      0.21       777
-# weighted avg       0.29      0.22      0.16       777
+#     accuracy                           0.78       777
+#    macro avg       0.74      0.64      0.66       777
+# weighted avg       0.76      0.78      0.75       777
