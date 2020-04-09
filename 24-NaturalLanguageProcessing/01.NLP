@@ -1,0 +1,99 @@
+# Install nltk library
+
+import nltk
+
+# Starts a shell program to download packages
+# nltk.download_shell()
+
+# We should follow the shell steps and download the 'stopwords' package
+
+# We are going go work with one file of SMS from the UCI (University of California)
+messages = [line.rstrip() for line in open('smsspamcollection/SMSSpamCollection')]
+
+print(len(messages))
+# 5574
+
+print(messages[0])
+# ham	Go until jurong point, crazy.. Available only in bugis n great world la e buffet... Cine there got amore wat...
+
+for mess_no, message in enumerate(messages[0:10]):
+    print(mess_no, message)
+
+# 0 ham	Go until jurong point, crazy.. Available only in bugis n great world la e buffet... Cine there got amore wat...
+# 1 ham	Ok lar... Joking wif u oni...
+# 2 spam	Free entry in 2 a wkly comp to win FA Cup final tkts 21st May 2005. Text FA to 87121 to receive entry question(std txt rate)T&C's apply 08452810075over18's
+# 3 ham	U dun say so early hor... U c already then say...
+# 4 ham	Nah I don't think he goes to usf, he lives around here though
+# 5 spam	FreeMsg Hey there darling it's been 3 week's now and no word back! I'd like some fun you up for it still? Tb ok! XxX std chgs to send, £1.50 to rcv
+# 6 ham	Even my brother is not like to speak with me. They treat me like aids patent.
+# 7 ham	As per your request 'Melle Melle (Oru Minnaminunginte Nurungu Vettam)' has been set as your callertune for all Callers. Press *9 to copy your friends Callertune
+# 8 spam	WINNER!! As a valued network customer you have been selected to receivea £900 prize reward! To claim call 09061701461. Claim code KL341. Valid 12 hours only.
+# 9 spam	Had your mobile 11 months or more? U R entitled to Update to the latest colour mobiles with camera for Free! Call The Mobile Update Co FREE on 08002986030
+
+# The format of the data is: message type - tab - message text
+# We are going to parse this tab separated values (TSV) using pandas
+
+import pandas as pd
+
+messages = pd.read_csv('smsspamcollection/SMSSpamCollection', sep='\t', names=['label', 'message'])
+print(messages.head())
+
+#   label                                            message
+# 0   ham  Go until jurong point, crazy.. Available only ...
+# 1   ham                      Ok lar... Joking wif u oni...
+# 2  spam  Free entry in 2 a wkly comp to win FA Cup fina...
+# 3   ham  U dun say so early hor... U c already then say...
+# 4   ham  Nah I don't think he goes to usf, he lives aro...
+
+print(messages.describe())
+
+#        label                 message
+# count   5572                    5572
+# unique     2                    5169
+# top      ham  Sorry, I'll call later
+# freq    4825                      30
+
+print(messages.groupby('label').describe())
+
+#         count unique                                                top freq
+# label
+# ham      4825   4516                             Sorry, I'll call later   30
+# spam      747    653  Please call our customer service representativ...    4
+
+# We are going to add one new column that is the length of the messages
+messages['length'] = messages['message'].apply(len)
+
+print(messages.head())
+#   label                                            message  length
+# 0   ham  Go until jurong point, crazy.. Available only ...     111
+# 1   ham                      Ok lar... Joking wif u oni...      29
+# 2  spam  Free entry in 2 a wkly comp to win FA Cup fina...     155
+# 3   ham  U dun say so early hor... U c already then say...      49
+# 4   ham  Nah I don't think he goes to usf, he lives aro...      61
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+sns.distplot(messages['length'], bins=50, kde=False)
+plt.show()
+
+print(messages['length'].describe())
+
+# count    5572.000000
+# mean       80.489950
+# std        59.942907
+# min         2.000000
+# 25%        36.000000
+# 50%        62.000000
+# 75%       122.000000
+# max       910.000000
+
+# Get the largest message
+print(messages[messages['length'] == 910]['message'].iloc[0])
+# For me the love should start with attraction.i should feel that I need her every time around me.she should be the first thing which comes in my thoughts.I would start the day and end it with her.she should be there every time I dream.love will be then when my every breath has her name.my life should happen around her.my life will be named to her.I would cry for her.will give all my happiness and take all her sorrows.I will be ready to fight with anyone for her.I will be in love when I will be doing the craziest things for her.love will be when I don't have to proove anyone that my girl is the most beautiful lady on the whole planet.I will always be singing praises for her.love will be when I start up making chicken curry and end up makiing sambar.life will be the most beautiful then.will get every morning and thank god for the day because she is with me.I would like to say a lot..will tell later..
+
+# Histogram of messages
+messages.hist(column='length', by='label', bins=60, figsize=(12, 4))
+plt.show()
+
+# In the previus plot we see that spam messages tend to have more characters.
