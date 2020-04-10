@@ -201,3 +201,116 @@ print(bow_transformer.get_feature_names()[4068])
 
 print(bow_transformer.get_feature_names()[9554])
 # say
+
+# PART 3
+
+messages_bow = bow_transformer.transform(messages['message'])
+
+print("Shape of sparse matrix: ", messages_bow.shape)
+# Shape of sparse matrix:  (5572, 11425)
+
+print("Amount of non zero occurrences: ", messages_bow.nnz)
+# Amount of non zero occurrences:  50548
+
+sparsity = (100.0 * messages_bow.nnz / (messages_bow.shape[0] * messages_bow.shape[1]))
+
+print("Sparsity: ", sparsity)
+# Sparsity:  0.07940295412668218
+
+from sklearn.feature_extraction.text import TfidfTransformer
+
+tfidf_transformer = TfidfTransformer().fit(messages_bow)
+tfidf4 = tfidf_transformer.transform(bow4)
+print(tfidf4)
+
+# We have document frequency and term frequency relationship
+# The numbers can be interpreted as a weight value for each of the words versus the document
+
+# (0, 9554) 0.5385626262927564
+# (0, 7186) 0.4389365653379857
+# (0, 6222) 0.3187216892949149
+# (0, 6204) 0.29953799723697416
+# (0, 5261) 0.29729957405868723
+# (0, 4629) 0.26619801906087187
+# (0, 4068) 0.40832589933384067
+
+# Get 'university' frequency
+print(tfidf_transformer.idf_[bow_transformer.vocabulary_['university']])
+# 8.527076498901426
+
+messages_tfidf = tfidf_transformer.transform(messages_bow)
+
+from sklearn.naive_bayes import MultinomialNB
+
+spam_detect_model = MultinomialNB().fit(messages_tfidf, messages['label'])
+prediction = spam_detect_model.predict(tfidf4)[0]
+
+print(prediction)
+# ham
+
+# If we check the original dataframe, we'll see that the prediction has been done correctly
+print(messages['label'][3])
+# ham
+
+# Now, we are going to run the prediction on all the messages
+all_pred = spam_detect_model.predict(messages_tfidf)
+
+# Previously, we did the prediction without split the dataset into train and test subsets.
+# Now, we are going to split the dataset and redo the prediction
+
+from sklearn.model_selection import train_test_split
+
+msg_train, msg_test, label_train, label_test = train_test_split(messages['message'], messages['label'],
+                                                                test_size=0.3, random_state=101)
+
+# sklearn has a pipeline feature that allow us do the previous steps saving time
+
+from sklearn.pipeline import Pipeline
+
+pipeline = Pipeline([
+    ('bow', CountVectorizer(analyzer=text_process)),
+    ('tfidf', TfidfTransformer()),
+    ('classifier', MultinomialNB())
+])
+
+pipeline.fit(msg_train, label_train)
+
+predictions = pipeline.predict(msg_test)
+
+from sklearn.metrics import classification_report
+
+print(classification_report(label_test, predictions))
+#               precision    recall  f1-score   support
+#
+#          ham       0.96      1.00      0.98      1475
+#         spam       1.00      0.65      0.79       197
+#
+#     accuracy                           0.96      1672
+#    macro avg       0.98      0.83      0.88      1672
+# weighted avg       0.96      0.96      0.96      1672
+
+
+# Instead of choosing MultinomialNB classifier, we can choose another else, as for examplo, RandomForestClassifier
+
+from sklearn.ensemble import RandomForestClassifier
+
+pipeline = Pipeline([
+    ('bow', CountVectorizer(analyzer=text_process)),
+    ('tfidf', TfidfTransformer()),
+    ('classifier', RandomForestClassifier())
+])
+
+pipeline.fit(msg_train, label_train)
+predictions = pipeline.predict(msg_test)
+
+print(classification_report(label_test, predictions))
+
+#               precision    recall  f1-score   support
+#
+#          ham       0.97      1.00      0.98      1475
+#         spam       0.99      0.77      0.87       197
+#
+#     accuracy                           0.97      1672
+#    macro avg       0.98      0.89      0.93      1672
+# weighted avg       0.97      0.97      0.97      1672
+
