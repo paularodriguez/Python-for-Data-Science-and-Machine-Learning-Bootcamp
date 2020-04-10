@@ -87,8 +87,8 @@ print(yelp.head())
 # Use FacetGrid from the seaborn library to create a grid of 5 histograms of text length based off of the star ratings.
 # Reference the seaborn documentation for hints on this
 
-g = sns.FacetGrid(yelp,col='stars')
-g.map(plt.hist,'text length')
+g = sns.FacetGrid(yelp, col='stars')
+g.map(plt.hist, 'text length')
 plt.show()
 
 # Create a boxplot of text length for each star category.
@@ -125,3 +125,35 @@ print(stars.corr())
 
 sns.heatmap(data=stars.corr(), cmap='coolwarm')
 plt.show()
+
+# NLP Classification Task
+# Let's move on to the actual task. To make things a little easier,
+# go ahead and only grab reviews that were either 1 star or 5 stars.
+
+# Create a dataframe called yelp_class that contains the columns of yelp dataframe
+# but for only the 1 or 5 star reviews.
+
+yelp_class = yelp[(yelp.stars == 1) | (yelp.stars == 5)]
+
+print(yelp_class.groupby('stars').count())
+#        business_id  date  review_id  text  type  user_id  cool  useful  funny  text length
+# stars
+# 1              749   749        749   749   749      749   749     749    749          749
+# 5             3337  3337       3337  3337  3337     3337  3337    3337   3337         3337
+
+# Create two objects X and y. X will be the 'text' column of yelp_class
+# and y will be the 'stars' column of yelp_class.
+# (Your features and target/labels)
+
+X = yelp_class['text']
+y = yelp_class['stars']
+
+# Import CountVectorizer and create a CountVectorizer object
+
+from sklearn.feature_extraction.text import CountVectorizer
+
+cv = CountVectorizer()
+
+# Use the fit_transform method on the CountVectorizer object and pass in X (the 'text' column). Save this result by overwriting X.
+
+X = cv.fit_transform(X)
