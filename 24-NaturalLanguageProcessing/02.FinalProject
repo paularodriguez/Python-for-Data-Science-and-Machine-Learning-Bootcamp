@@ -203,3 +203,61 @@ print(classification_report(y_test, predictions))
 print(confusion_matrix(y_test, predictions))
 # [[159  69]
 #  [ 22 976]]
+
+# Great! Let's see what happens if we try to include TF-IDF to this process using a pipeline
+
+# Using Text Processing
+
+# Import TfidfTransformer from sklearn.
+from sklearn.feature_extraction.text import TfidfTransformer
+
+# Import Pipeline from sklearn
+from sklearn.pipeline import Pipeline
+
+# Now create a pipeline with the following steps:CountVectorizer(), TfidfTransformer(),MultinomialNB()
+
+pipeline = Pipeline([
+    ('bow', CountVectorizer()),
+    ('tfidf', TfidfTransformer()),
+    ('classifier', MultinomialNB())
+])
+
+# Using the Pipeline
+# Time to use the pipeline! Remember this pipeline has all your pre-process steps in it already,
+# meaning we'll need to re-split the original data (Remember that we overwrote X as the CountVectorized version.
+# What we need is just the text
+
+# Train Test Split
+# Redo the train test split on the yelp_class object.
+
+X = yelp_class['text']
+y = yelp_class['stars']
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=101)
+
+# Now fit the pipeline to the training data. Remember you can't use the same training data as last time
+# because that data has already been vectorized. We need to pass in just the text and labels
+
+pipeline.fit(X_train, y_train)
+
+# Predictions and Evaluation
+# Now use the pipeline to predict from the X_test and create a classification report and confusion matrix.
+# You should notice strange results.
+
+predictions = pipeline.predict(X_test)
+
+from sklearn.metrics import classification_report, confusion_matrix
+
+print(classification_report(y_test, predictions))
+#            1       0.00      0.00      0.00       228
+#            5       0.81      1.00      0.90       998
+#
+#     accuracy                           0.81      1226
+#    macro avg       0.41      0.50      0.45      1226
+# weighted avg       0.66      0.81      0.73      1226
+
+print(confusion_matrix(y_test, predictions))
+
+# [[  0 228]
+#  [  0 998]]
+
+# Looks like Tf-Idf actually made things worse! That is it for this project.
