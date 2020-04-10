@@ -10,6 +10,8 @@ import nltk
 # We are going go work with one file of SMS from the UCI (University of California)
 messages = [line.rstrip() for line in open('smsspamcollection/SMSSpamCollection')]
 
+# PART 1: Data exploration
+
 print(len(messages))
 # 5574
 
@@ -97,3 +99,105 @@ messages.hist(column='length', by='label', bins=60, figsize=(12, 4))
 plt.show()
 
 # In the previus plot we see that spam messages tend to have more characters.
+
+# PART 2: Data analysis
+
+# We are going to split the message into words and remove those that are redundant.
+# To do that, we are going to use the downloaded stopwords package
+
+mess = "Sample message! Note: it has puctuation."
+
+# Remove punctuation using string python module
+import string
+
+print(string.punctuation)
+# !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~
+
+nopunc = [c for c in mess if c not in string.punctuation]
+print(nopunc)
+# ['S', 'a', 'm', 'p', 'l', 'e', ' ', 'm', 'e', 's', 's', 'a', 'g', 'e', ' ', 'N', 'o', 't', 'e', ' ', 'i', 't', ' ', 'h', 'a', 's', ' ', 'p', 'u', 'c', 't', 'u', 'a', 't', 'i', 'o', 'n']
+
+# Remove stopwords
+from nltk.corpus import stopwords
+
+print(stopwords.words('english'))
+# ['S', 'a', 'm', 'p', 'l', 'e', ' ', 'm', 'e', 's', 's', 'a', 'g', 'e', ' ', 'N', 'o', 't', 'e', ' ', 'i', 't', ' ', 'h', 'a', 's', ' ', 'p', 'u', 'c', 't', 'u', 'a', 't', 'i', 'o', 'n']
+# ['i', 'me', 'my', 'myself', 'we', 'our', 'ours', 'ourselves', 'you', "you're", "you've", "you'll", "you'd", 'your', 'yours', 'yourself', 'yourselves', 'he', 'him', 'his', 'himself', 'she', "she's", 'her', 'hers', 'herself', 'it', "it's", 'its', 'itself', 'they', 'them', 'their', 'theirs', 'themselves', 'what', 'which', 'who', 'whom', 'this', 'that', "that'll", 'these', 'those', 'am', 'is', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'having', 'do', 'does', 'did', 'doing', 'a', 'an', 'the', 'and', 'but', 'if', 'or', 'because', 'as', 'until', 'while', 'of', 'at', 'by', 'for', 'with', 'about', 'against', 'between', 'into', 'through', 'during', 'before', 'after', 'above', 'below', 'to', 'from', 'up', 'down', 'in', 'out', 'on', 'off', 'over', 'under', 'again', 'further', 'then', 'once', 'here', 'there', 'when', 'where', 'why', 'how', 'all', 'any', 'both', 'each', 'few', 'more', 'most', 'other', 'some', 'such', 'no', 'nor', 'not', 'only', 'own', 'same', 'so', 'than', 'too', 'very', 's', 't', 'can', 'will', 'just', 'don', "don't", 'should', "should've", 'now', 'd', 'll', 'm', 'o', 're', 've', 'y', 'ain', 'aren', "aren't", 'couldn', "couldn't", 'didn', "didn't", 'doesn', "doesn't", 'hadn', "hadn't", 'hasn', "hasn't", 'haven', "haven't", 'isn', "isn't", 'ma', 'mightn', "mightn't", 'mustn', "mustn't", 'needn', "needn't", 'shan', "shan't", 'shouldn', "shouldn't", 'wasn', "wasn't", 'weren', "weren't", 'won', "won't", 'wouldn', "wouldn't"]
+
+# Join nopunc again
+nopunc = ''.join(nopunc)
+print(nopunc)
+# Sample message Note it has puctuation
+
+clean_mess = [word for word in nopunc.split() if word.lower() not in stopwords.words('english')]
+
+print(clean_mess)
+
+
+# ['Sample', 'message', 'Note', 'puctuation']
+
+# Now, we are going to apply the previous process to the entire dataframe
+
+def text_process(mess):
+    '''
+    1. Remove puc
+    2. Remove stop words
+    3. Return list of clean text words
+    :param mess: The text to process
+    :return: List of words
+    '''
+    nopunc = [char for char in mess if char not in string.punctuation]
+    nopunc = ''.join(nopunc)
+    return [word for word in nopunc.split() if word.lower() not in stopwords.words('english')]
+
+
+# Utils to display full dataframe
+desired_width = 320
+pd.set_option('display.width', desired_width)
+pd.set_option('display.max_columns', 100)
+
+print(messages['message'].head(5).apply(text_process))
+
+# 0    [Go, jurong, point, crazy, Available, bugis, n...
+# 1                       [Ok, lar, Joking, wif, u, oni]
+# 2    [Free, entry, 2, wkly, comp, win, FA, Cup, fin...
+# 3        [U, dun, say, early, hor, U, c, already, say]
+# 4    [Nah, dont, think, goes, usf, lives, around, t...
+# Name: message, dtype: object
+
+# Stemming
+# run, running, ran, run -> run
+# This technique will be applied later
+
+# Vectorization: Each message will be converted into a vector
+
+from sklearn.feature_extraction.text import CountVectorizer
+
+bow_transformer = CountVectorizer(analyzer=text_process).fit(messages['message'])
+
+print(len(bow_transformer.vocabulary_))
+
+# 11425: Number of words that we have
+
+mess4 = messages['message'][3]
+print(mess4)
+# U dun say so early hor... U c already then say...
+
+bow4 = bow_transformer.transform([mess4])
+print(bow4)
+# (0, 4068)  2
+# (0, 4629)  1
+# (0, 5261)  1
+# (0, 6204)  1
+# (0, 6222)  1
+# (0, 7186)  1
+# (0, 9554)  2
+
+print(bow4.shape)
+# (1, 11425)
+
+print(bow_transformer.get_feature_names()[4068])
+# U
+
+print(bow_transformer.get_feature_names()[9554])
+# say
