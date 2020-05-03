@@ -13,8 +13,8 @@ print(df.head())
 # 3  540.382220   999.952251  1000.440940
 # 4  546.024553  1000.446011  1000.338531
 
-sns.pairplot(df)
-plt.show()
+# sns.pairplot(df)
+# plt.show()
 
 # We split the data into train and test datasets
 from sklearn.model_selection import train_test_split
@@ -131,3 +131,90 @@ model.fit(x=X_train, y=y_train, epochs=250)
 loss_df = pd.DataFrame(model.history.history)
 loss_df.plot()
 plt.show()
+
+loss = model.evaluate(X_test, y_test, verbose=0)
+# Returns the model loss
+print(loss)
+# 24.94885986328125
+
+# The same with training data
+print(model.evaluate(X_train, y_train, verbose=0))
+# 23.7758772277832
+
+# It's a numpy array
+test_predictions = model.predict(X_test)
+print(test_predictions)
+# [[405.8151 ]
+#  [622.11383]
+#  [590.77625]
+#  [571.7398 ]
+
+# Here, we convert it to one pandas dataframe
+test_predictions = pd.Series(test_predictions.reshape(300, ))
+print(test_predictions.head())
+
+# 0    405.815094
+# 1    622.113831
+# 2    590.776245
+# 3    571.739807
+# 4    368.407318
+# dtype: float32
+
+pred_df = pd.DataFrame(y_test, columns=['Test True Y'])
+pred_df = pd.concat([pred_df, test_predictions], axis=1)
+pred_df.columns = ['Test True Y', 'Model Predictions']
+print(pred_df.head())
+
+#    Test True Y  Model Predictions
+# 0   402.296319  405.815094
+# 1   624.156198  622.113831
+# 2   582.455066  590.776245
+# 3   578.588606  571.739807
+# 4   371.224104  368.407318
+
+# We are going to plot the values
+
+sns.scatterplot(x='Test True Y', y='Model Predictions', data=pred_df)
+plt.show()
+
+from sklearn.metrics import mean_absolute_error, mean_squared_error
+
+print(mean_absolute_error(pred_df['Test True Y'], pred_df['Model Predictions']))
+# 4.025071752384227
+
+print(mean_squared_error(pred_df['Test True Y'], pred_df['Model Predictions']))
+# 25.06062906872388
+
+print(df.describe())
+
+#              price     feature1     feature2
+# count  1000.000000  1000.000000  1000.000000
+# mean    498.673029  1000.014171   999.979847
+# std      93.785431     0.974018     0.948330
+# min     223.346793   997.058347   996.995651
+# 25%     433.025732   999.332068   999.316106
+# 50%     502.382117  1000.009915  1000.002243
+# 75%     564.921588  1000.637580  1000.645380
+# max     774.407854  1003.207934  1002.666308
+
+# The mean price is 498.673029 and our mae is 4.025, that represents about 1%
+# Our mae is good
+# Also, our mse is good
+
+# PREDICT NEW DATA
+new_gem = [[998, 1000]]
+
+# 1. Our model is scaled, so we have to transform this new value
+new_gem = scaler.transform(new_gem)
+
+# 2. Do the prediction
+print(model.predict(new_gem))
+# [[420.2104]]
+
+# If we want to save the model:
+
+from tensorflow.keras.models import load_model
+model.save('my_gem_model.h5')
+
+# To get one saved model
+later_model = load_model('my_gem_model.h5')
