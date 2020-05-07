@@ -1,0 +1,226 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+desired_width = 320
+pd.set_option('display.width', desired_width)
+pd.set_option('display.max_columns', 100)
+
+## The Data
+
+# We will be using data from a Kaggle data set:
+# https://www.kaggle.com/harlfoxem/housesalesprediction
+
+#### Feature Columns
+
+# * id - Unique ID for each home sold
+# * date - Date of the home sale
+# * price - Price of each home sold
+# * bedrooms - Number of bedrooms
+# * bathrooms - Number of bathrooms, where .5 accounts for a room with a toilet but no shower
+# * sqft_living - Square footage of the apartments interior living space
+# * sqft_lot - Square footage of the land space
+# * floors - Number of floors
+# * waterfront - A dummy variable for whether the apartment was overlooking the waterfront or not
+# * view - An index from 0 to 4 of how good the view of the property was
+# * condition - An index from 1 to 5 on the condition of the apartment,
+# * grade - An index from 1 to 13, where 1-3 falls short of building construction and design, 7 has an average level of construction and design, and 11-13 have a high quality level of construction and design.
+# * sqft_above - The square footage of the interior housing space that is above ground level
+# * sqft_basement - The square footage of the interior housing space that is below ground level
+# * yr_built - The year the house was initially built
+# * yr_renovated - The year of the house’s last renovation
+# * zipcode - What zipcode area the house is in
+# * lat - Lattitude
+# * long - Longitude
+# * sqft_living15 - The square footage of interior housing living space for the nearest 15 neighbors
+# * sqft_lot15 - The square footage of the land lots of the nearest 15 neighbors
+
+df = pd.read_csv('DATA/kc_house_data.csv')
+
+# First, we are going to check if we have missing data
+
+print(df.isnull().sum())
+# id               0
+# date             0
+# price            0
+# bedrooms         0
+# bathrooms        0
+# sqft_living      0
+# sqft_lot         0
+# floors           0
+# waterfront       0
+# view             0
+# condition        0
+# grade            0
+# sqft_above       0
+# sqft_basement    0
+# yr_built         0
+# yr_renovated     0
+# zipcode          0
+# lat              0
+# long             0
+# sqft_living15    0
+# sqft_lot15       0
+# dtype: int64
+
+# No missing data
+
+print(df.describe().transpose())
+
+#                  count          mean           std           min           25%           50%           75%           max
+# id             21597.0  4.580474e+09  2.876736e+09  1.000102e+06  2.123049e+09  3.904930e+09  7.308900e+09  9.900000e+09
+# price          21597.0  5.402966e+05  3.673681e+05  7.800000e+04  3.220000e+05  4.500000e+05  6.450000e+05  7.700000e+06
+# bedrooms       21597.0  3.373200e+00  9.262989e-01  1.000000e+00  3.000000e+00  3.000000e+00  4.000000e+00  3.300000e+01
+# bathrooms      21597.0  2.115826e+00  7.689843e-01  5.000000e-01  1.750000e+00  2.250000e+00  2.500000e+00  8.000000e+00
+# sqft_living    21597.0  2.080322e+03  9.181061e+02  3.700000e+02  1.430000e+03  1.910000e+03  2.550000e+03  1.354000e+04
+# sqft_lot       21597.0  1.509941e+04  4.141264e+04  5.200000e+02  5.040000e+03  7.618000e+03  1.068500e+04  1.651359e+06
+# floors         21597.0  1.494096e+00  5.396828e-01  1.000000e+00  1.000000e+00  1.500000e+00  2.000000e+00  3.500000e+00
+# waterfront     21597.0  7.547345e-03  8.654900e-02  0.000000e+00  0.000000e+00  0.000000e+00  0.000000e+00  1.000000e+00
+# view           21597.0  2.342918e-01  7.663898e-01  0.000000e+00  0.000000e+00  0.000000e+00  0.000000e+00  4.000000e+00
+# condition      21597.0  3.409825e+00  6.505456e-01  1.000000e+00  3.000000e+00  3.000000e+00  4.000000e+00  5.000000e+00
+# grade          21597.0  7.657915e+00  1.173200e+00  3.000000e+00  7.000000e+00  7.000000e+00  8.000000e+00  1.300000e+01
+# sqft_above     21597.0  1.788597e+03  8.277598e+02  3.700000e+02  1.190000e+03  1.560000e+03  2.210000e+03  9.410000e+03
+# sqft_basement  21597.0  2.917250e+02  4.426678e+02  0.000000e+00  0.000000e+00  0.000000e+00  5.600000e+02  4.820000e+03
+# yr_built       21597.0  1.971000e+03  2.937523e+01  1.900000e+03  1.951000e+03  1.975000e+03  1.997000e+03  2.015000e+03
+# yr_renovated   21597.0  8.446479e+01  4.018214e+02  0.000000e+00  0.000000e+00  0.000000e+00  0.000000e+00  2.015000e+03
+# zipcode        21597.0  9.807795e+04  5.351307e+01  9.800100e+04  9.803300e+04  9.806500e+04  9.811800e+04  9.819900e+04
+# lat            21597.0  4.756009e+01  1.385518e-01  4.715590e+01  4.747110e+01  4.757180e+01  4.767800e+01  4.777760e+01
+# long           21597.0 -1.222140e+02  1.407235e-01 -1.225190e+02 -1.223280e+02 -1.222310e+02 -1.221250e+02 -1.213150e+02
+# sqft_living15  21597.0  1.986620e+03  6.852305e+02  3.990000e+02  1.490000e+03  1.840000e+03  2.360000e+03  6.210000e+03
+# sqft_lot15     21597.0  1.275828e+04  2.727444e+04  6.510000e+02  5.100000e+03  7.620000e+03  1.008300e+04  8.712000e+05
+
+# Analysis of price feature
+plt.figure(figsize=(10, 6))
+sns.distplot(df['price'])
+plt.show()
+
+# Analysis of bedrooms feature
+sns.countplot(df['bedrooms'])
+plt.show()
+
+# Analysis of correlation
+print(df.corr())
+
+#                      id     price  bedrooms  bathrooms  sqft_living  sqft_lot    floors  waterfront      view  condition     grade  sqft_above  sqft_basement  yr_built  yr_renovated   zipcode       lat      long  sqft_living15  sqft_lot15
+# id             1.000000 -0.016772  0.001150   0.005162    -0.012241 -0.131911  0.018608   -0.002727  0.011536  -0.023803  0.008188   -0.010799      -0.005193  0.021617     -0.016925 -0.008211 -0.001798  0.020672      -0.002701   -0.138557
+# price         -0.016772  1.000000  0.308787   0.525906     0.701917  0.089876  0.256804    0.266398  0.397370   0.036056  0.667951    0.605368       0.323799  0.053953      0.126424 -0.053402  0.306692  0.022036       0.585241    0.082845
+# bedrooms       0.001150  0.308787  1.000000   0.514508     0.578212  0.032471  0.177944   -0.006834  0.080008   0.026496  0.356563    0.479386       0.302808  0.155670      0.018389 -0.154092 -0.009951  0.132054       0.393406    0.030690
+# bathrooms      0.005162  0.525906  0.514508   1.000000     0.755758  0.088373  0.502582    0.063744  0.188386  -0.126479  0.665838    0.686668       0.283440  0.507173      0.050544 -0.204786  0.024280  0.224903       0.569884    0.088303
+# sqft_living   -0.012241  0.701917  0.578212   0.755758     1.000000  0.173453  0.353953    0.103854  0.284709  -0.059445  0.762779    0.876448       0.435130  0.318152      0.055308 -0.199802  0.052155  0.241214       0.756402    0.184342
+# sqft_lot      -0.131911  0.089876  0.032471   0.088373     0.173453  1.000000 -0.004814    0.021632  0.074900  -0.008830  0.114731    0.184139       0.015418  0.052946      0.007686 -0.129586 -0.085514  0.230227       0.144763    0.718204
+# floors         0.018608  0.256804  0.177944   0.502582     0.353953 -0.004814  1.000000    0.023755  0.028814  -0.264075  0.458794    0.523989      -0.245715  0.489193      0.006427 -0.059541  0.049239  0.125943       0.280102   -0.010722
+# waterfront    -0.002727  0.266398 -0.006834   0.063744     0.103854  0.021632  0.023755    1.000000  0.401971   0.016611  0.082888    0.072109       0.080559 -0.026153      0.092873  0.030272 -0.014306 -0.041904       0.086507    0.030781
+# view           0.011536  0.397370  0.080008   0.188386     0.284709  0.074900  0.028814    0.401971  1.000000   0.045999  0.251728    0.167609       0.277078 -0.053636      0.103951  0.084622  0.005871 -0.078107       0.280681    0.072904
+# condition     -0.023803  0.036056  0.026496  -0.126479    -0.059445 -0.008830 -0.264075    0.016611  0.045999   1.000000 -0.146896   -0.158904       0.173849 -0.361592     -0.060788  0.002888 -0.015102 -0.105877      -0.093072   -0.003126
+# grade          0.008188  0.667951  0.356563   0.665838     0.762779  0.114731  0.458794    0.082888  0.251728  -0.146896  1.000000    0.756073       0.168220  0.447865      0.014261 -0.185771  0.113575  0.200341       0.713867    0.120981
+# sqft_above    -0.010799  0.605368  0.479386   0.686668     0.876448  0.184139  0.523989    0.072109  0.167609  -0.158904  0.756073    1.000000      -0.052156  0.424037      0.023251 -0.261570 -0.001199  0.344842       0.731767    0.195077
+# sqft_basement -0.005193  0.323799  0.302808   0.283440     0.435130  0.015418 -0.245715    0.080559  0.277078   0.173849  0.168220   -0.052156       1.000000 -0.133064      0.071233  0.074725  0.110414 -0.144546       0.200443    0.017550
+# yr_built       0.021617  0.053953  0.155670   0.507173     0.318152  0.052946  0.489193   -0.026153 -0.053636  -0.361592  0.447865    0.424037      -0.133064  1.000000     -0.224907 -0.347210 -0.148370  0.409993       0.326377    0.070777
+# yr_renovated  -0.016925  0.126424  0.018389   0.050544     0.055308  0.007686  0.006427    0.092873  0.103951  -0.060788  0.014261    0.023251       0.071233 -0.224907      1.000000  0.064325  0.029350 -0.068321      -0.002695    0.007944
+# zipcode       -0.008211 -0.053402 -0.154092  -0.204786    -0.199802 -0.129586 -0.059541    0.030272  0.084622   0.002888 -0.185771   -0.261570       0.074725 -0.347210      0.064325  1.000000  0.266742 -0.564259      -0.279299   -0.147294
+# lat           -0.001798  0.306692 -0.009951   0.024280     0.052155 -0.085514  0.049239   -0.014306  0.005871  -0.015102  0.113575   -0.001199       0.110414 -0.148370      0.029350  0.266742  1.000000 -0.135371       0.048679   -0.086139
+# long           0.020672  0.022036  0.132054   0.224903     0.241214  0.230227  0.125943   -0.041904 -0.078107  -0.105877  0.200341    0.344842      -0.144546  0.409993     -0.068321 -0.564259 -0.135371  1.000000       0.335626    0.255586
+# sqft_living15 -0.002701  0.585241  0.393406   0.569884     0.756402  0.144763  0.280102    0.086507  0.280681  -0.093072  0.713867    0.731767       0.200443  0.326377     -0.002695 -0.279299  0.048679  0.335626       1.000000    0.183515
+# sqft_lot15    -0.138557  0.082845  0.030690   0.088303     0.184342  0.718204 -0.010722    0.030781  0.072904  -0.003126  0.120981    0.195077       0.017550  0.070777      0.007944 -0.147294 -0.086139  0.255586       0.183515    1.000000
+
+print(df.corr()['price'].sort_values())
+
+# zipcode         -0.053402
+# id              -0.016772
+# long             0.022036
+# condition        0.036056
+# yr_built         0.053953
+# sqft_lot15       0.082845
+# sqft_lot         0.089876
+# yr_renovated     0.126424
+# floors           0.256804
+# waterfront       0.266398
+# lat              0.306692
+# bedrooms         0.308787
+# sqft_basement    0.323799
+# view             0.397370
+# bathrooms        0.525906
+# sqft_living15    0.585241
+# sqft_above       0.605368
+# grade            0.667951
+# sqft_living      0.701917
+# price            1.000000
+# Name: price, dtype: float64
+
+# We see that the feature sqft_living is high correlated
+
+# Correlation analysis using a scatter plot
+plt.figure(figsize=(10, 5))
+sns.scatterplot(x='price', y='sqft_living', data=df)
+plt.show()
+
+# Another sample: bedrooms and price using a boxplot
+plt.figure(figsize=(10, 6))
+sns.boxplot(x='bedrooms', y='price', data=df)
+plt.show()
+
+# Another sample: longitude and price using a boxplot
+# We won't expect some correlation, but we see some around -122.22
+plt.figure(figsize=(12, 6))
+sns.scatterplot(x='price', y='long', data=df)
+plt.show()
+
+# The previous for latitude
+plt.figure(figsize=(12, 6))
+sns.scatterplot(x='price', y='lat', data=df)
+plt.show()
+
+# In the previous plots we see a small correlation that fits to one expensive area
+
+# If we plot the longitude and the latitude we see the map of the city (Seattle)
+# We can see an expensive area
+plt.figure(figsize=(12, 6))
+sns.scatterplot(x='long', y='lat', data=df, hue='price')
+plt.show()
+
+# TOP 20 expensive houses
+print(df.sort_values('price', ascending=False).head(20))
+
+#                id        date      price  bedrooms  bathrooms  sqft_living  sqft_lot  floors  waterfront  view  condition  grade  sqft_above  sqft_basement  yr_built  yr_renovated  zipcode      lat     long  sqft_living15  sqft_lot15
+# 7245   6762700020  10/13/2014  7700000.0         6       8.00        12050     27600     2.5           0     3          4     13        8570           3480      1910          1987    98102  47.6298 -122.323           3940        8800
+# 3910   9808700762   6/11/2014  7060000.0         5       4.50        10040     37325     2.0           1     2          3     11        7680           2360      1940          2001    98004  47.6500 -122.214           3930       25449
+# 9245   9208900037   9/19/2014  6890000.0         6       7.75         9890     31374     2.0           0     4          3     13        8860           1030      2001             0    98039  47.6305 -122.240           4540       42730
+# 4407   2470100110    8/4/2014  5570000.0         5       5.75         9200     35069     2.0           0     0          3     13        6200           3000      2001             0    98039  47.6289 -122.233           3560       24345
+# 1446   8907500070   4/13/2015  5350000.0         5       5.00         8000     23985     2.0           0     4          3     12        6720           1280      2009             0    98004  47.6232 -122.220           4600       21750
+# 1313   7558700030   4/13/2015  5300000.0         6       6.00         7390     24829     2.0           1     4          4     12        5000           2390      1991             0    98040  47.5631 -122.210           4320       24619
+# 1162   1247600105  10/20/2014  5110000.0         5       5.25         8010     45517     2.0           1     4          3     12        5990           2020      1999             0    98033  47.6767 -122.211           3430       26788
+# 8085   1924059029   6/17/2014  4670000.0         5       6.75         9640     13068     1.0           1     4          3     12        4820           4820      1983          2009    98040  47.5570 -122.210           3270       10454
+# 2624   7738500731   8/15/2014  4500000.0         5       5.50         6640     40014     2.0           1     4          3     12        6350            290      2004             0    98155  47.7493 -122.280           3030       23408
+# 8629   3835500195   6/18/2014  4490000.0         4       3.00         6430     27517     2.0           0     0          3     12        6430              0      2001             0    98004  47.6208 -122.219           3720       14592
+# 12358  6065300370    5/6/2015  4210000.0         5       6.00         7440     21540     2.0           0     0          3     12        5550           1890      2003             0    98006  47.5692 -122.189           4740       19329
+# 4145   6447300265  10/14/2014  4000000.0         4       5.50         7080     16573     2.0           0     0          3     12        5760           1320      2008             0    98039  47.6151 -122.224           3140       15996
+# 2083   8106100105  11/14/2014  3850000.0         4       4.25         5770     21300     2.0           1     4          4     11        5770              0      1980             0    98040  47.5850 -122.222           4620       22748
+# 7028    853200010    7/1/2014  3800000.0         5       5.50         7050     42840     1.0           0     2          4     13        4320           2730      1978             0    98004  47.6229 -122.220           5070       20570
+# 19002  2303900100   9/11/2014  3800000.0         3       4.25         5510     35000     2.0           0     4          3     13        4910            600      1997             0    98177  47.7296 -122.370           3430       45302
+# 16288  7397300170   5/30/2014  3710000.0         4       3.50         5550     28078     2.0           0     2          4     12        3350           2200      2000             0    98039  47.6395 -122.234           2980       19602
+# 18467  4389201095   5/11/2015  3650000.0         5       3.75         5020      8694     2.0           0     1          3     12        3970           1050      2007             0    98004  47.6146 -122.213           4190       11275
+# 6502   4217402115   4/21/2015  3650000.0         6       4.75         5480     19401     1.5           1     4          5     11        3910           1570      1936             0    98105  47.6515 -122.277           3510       15810
+# 15241  2425049063   9/11/2014  3640000.0         4       3.25         4830     22257     2.0           1     4          4     11        4830              0      1990             0    98039  47.6409 -122.241           3820       25582
+# 19133  3625049042  10/11/2014  3640000.0         5       6.00         5490     19897     2.0           0     0          3     12        5490              0      2005             0    98039  47.6165 -122.236           2910       17600
+
+# We are going to remove top expensive houses from the dataset: The top 1%
+
+# Calculate the number of houses
+print(len(df) * 0.01)
+# 215.97
+
+non_top_1_perc = df.sort_values('price', ascending=False)[216:]
+
+# If we run again the scatter map, we'll see a clearer color distribution
+plt.figure(figsize=(12, 6))
+sns.scatterplot(x='long', y='lat', data=non_top_1_perc, edgecolor=None, alpha=0.2, palette='RdYlGn', hue='price')
+plt.show()
+
+# We see that those houses next to the water are more expensive
+
+# Waterfront plot
+sns.boxplot(x='waterfront', y='price', data=df)
+plt.show()
+
+
