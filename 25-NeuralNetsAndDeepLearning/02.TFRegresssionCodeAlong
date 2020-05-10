@@ -348,3 +348,49 @@ print(df['yr_renovated'].value_counts())
 
 # We are going to keep this feature but one future task here is to convert it to a categorical feature, where 0 means
 # no renovated and one year means renovated
+
+## --- Create the model --
+
+# Separate the labels from the data (and features from result)
+X = df.drop('price', axis=1).values
+y = df['price'].values
+
+# split the data
+
+from sklearn.model_selection import train_test_split
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=101)
+
+# Scale the data
+
+from sklearn.preprocessing import MinMaxScaler
+
+scaler = MinMaxScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.fit_transform(X_test)
+
+# Build de model
+
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense
+
+print(X_train.shape)
+# (15117, 19)
+
+# The model have 19 features, so, we are going to have 19 neurons in our layer
+
+model = Sequential()
+model.add(Dense(19, activation='relu'))
+model.add(Dense(19, activation='relu'))
+model.add(Dense(19, activation='relu'))
+model.add(Dense(19, activation='relu'))
+
+model.add(Dense(1))
+
+model.compile(optimizer='adam', loss='mse')
+
+# Here, we are going to pass also our validation data
+model.fit(x=X_train, y=y_train,
+          validation_data=(X_test, y_test),
+          batch_size=128,
+          epochs=400)
