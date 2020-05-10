@@ -394,3 +394,99 @@ model.fit(x=X_train, y=y_train,
           validation_data=(X_test, y_test),
           batch_size=128,
           epochs=400)
+
+# Returns the model losses
+losses = pd.DataFrame(model.history.history)
+print(losses)
+
+# We have the training loss and the validation loss
+
+#              loss      val_loss
+# 0    4.302479e+11  4.189634e+11
+# 1    4.298213e+11  4.175596e+11
+# 2    4.237015e+11  4.039975e+11
+# 3    3.900786e+11  3.476296e+11
+# 4    2.954948e+11  2.274380e+11
+# ..            ...           ...
+# 395  2.988484e+10  3.332941e+10
+# 396  2.985819e+10  3.413292e+10
+# 397  2.985869e+10  3.504579e+10
+# 398  2.987566e+10  3.432424e+10
+# 399  2.983446e+10  3.276566e+10
+#
+# [400 rows x 2 columns]
+
+losses.plot()
+plt.show()
+
+# The plot is ok, we see that training loss and validation loss go down
+
+# Evaluation
+
+from sklearn.metrics import mean_squared_error, mean_absolute_error, explained_variance_score
+
+predictions = model.predict(X_test)
+print(predictions)
+
+# [400 rows x 2 columns]
+# [[332204.6 ]
+#  [530515.2 ]
+#  [459112.75]
+#  ...
+#  [302488.94]
+#  [478289.75]
+#  [581737.56]]
+
+
+# Compare the predictions with the real values
+
+print(mean_squared_error(y_test, predictions))
+# 32751556168.61814
+
+print(mean_absolute_error(y_test, predictions))
+# 109503.31883921682
+
+# Error of 109503$
+
+# Is the result good?
+print(df['price'].describe())
+
+# count    2.159700e+04
+# mean     5.402966e+05
+# std      3.673681e+05
+# min      7.800000e+04
+# 25%      3.220000e+05
+# 50%      4.500000e+05
+# 75%      6.450000e+05
+# max      7.700000e+06
+
+# The avg price of the house is 540296.6
+# The error is 109503, about the 20% of the mean price, it's not a good result
+
+# Now, we are going to analyze the variance of our model
+print(explained_variance_score(y_test, predictions))
+# 0.7836353227857381
+
+plt.figure(figsize=(12, 6))
+plt.scatter(y_test, predictions)
+plt.plot(y_test, y_test, 'r')
+plt.show()
+
+# We are good predicting houses between 0 a 2 million dollars
+
+# If we want to predict houses with prices over that threshold
+# we could retrain the model using the most expensive houses.
+
+# How to predict a new house?
+
+single_house = df.drop('price', axis=1).iloc[0]
+single_house = scaler.transform(single_house.values.reshape(-1,19))
+
+print(model.predict(single_house))
+# [[239105.81]]
+
+print(df.head(1))
+#       price  bedrooms  bathrooms  sqft_living  sqft_lot  floors  waterfront  view  condition  grade  sqft_above  sqft_basement  yr_built  yr_renovated      lat     long  sqft_living15  sqft_lot15  year  month
+# 0  221900.0         3        1.0         1180      5650     1.0           0     0          3      7        1180              0      1955             0  47.5112 -122.257           1340        5650  2014     10
+
+# The real price is 221900 and the predicted price was 239105
