@@ -223,4 +223,128 @@ plt.show()
 sns.boxplot(x='waterfront', y='price', data=df)
 plt.show()
 
+# Remove unneeded features from the DF
+# The ID
+df = df.drop('id', axis=1)
 
+# Transform the date
+
+print(df['date'][0])
+# 10/13/2014
+print(type(df['date'][0]))
+# <class 'str'>
+
+df['date'] = pd.to_datetime(df['date'])
+
+print(df['date'][0])
+# 2014-10-13 00:00:00
+print(type(df['date'][0]))
+# <class 'pandas._libs.tslibs.timestamps.Timestamp'>
+
+# Create year and month columns
+df['year'] = df['date'].apply(lambda date: date.year)
+df['month'] = df['date'].apply(lambda date: date.month)
+
+print(df.head())
+
+#         date     price  bedrooms  bathrooms  sqft_living  sqft_lot  floors  waterfront  view  condition  grade  sqft_above  sqft_basement  yr_built  yr_renovated  zipcode      lat     long  sqft_living15  sqft_lot15  year  month
+# 0 2014-10-13  221900.0         3       1.00         1180      5650     1.0           0     0          3      7        1180              0      1955             0    98178  47.5112 -122.257           1340        5650  2014     10
+# 1 2014-12-09  538000.0         3       2.25         2570      7242     2.0           0     0          3      7        2170            400      1951          1991    98125  47.7210 -122.319           1690        7639  2014     12
+# 2 2015-02-25  180000.0         2       1.00          770     10000     1.0           0     0          3      6         770              0      1933             0    98028  47.7379 -122.233           2720        8062  2015      2
+# 3 2014-12-09  604000.0         4       3.00         1960      5000     1.0           0     0          5      7        1050            910      1965             0    98136  47.5208 -122.393           1360        5000  2014     12
+# 4 2015-02-18  510000.0         3       2.00         1680      8080     1.0           0     0          3      8        1680              0      1987             0    98074  47.6168 -122.045           1800        7503  2015      2
+
+# Analysis of month selling date
+
+plt.figure(figsize=(10, 6))
+sns.boxplot(x='month', y='price', data=df)
+plt.show()
+
+# No differences by month selling date
+
+# If we check the numbers:
+
+print(df.groupby('month').mean()['price'])
+
+# month
+# 1     525963.251534
+# 2     508520.051323
+# 3     544057.683200
+# 4     562215.615074
+# 5     550849.746893
+# 6     557534.318182
+# 7     544892.161013
+# 8     536655.212481
+# 9     529723.517787
+# 10    539439.447228
+# 11    522359.903478
+# 12    524799.902041
+# Name: price, dtype: float64
+
+df.groupby('month').mean()['price'].plot()
+plt.show()
+
+# Analysis of year selling date
+
+df.groupby('year').mean()['price'].plot()
+plt.show()
+
+# The price increases
+
+
+# Drop original date column
+df = df.drop('date', axis=1)
+
+# Columns
+print(df.columns)
+# Index(['price', 'bedrooms', 'bathrooms', 'sqft_living', 'sqft_lot',
+# 'floors', 'waterfront', 'view', 'condition', 'grade', 'sqft_above',
+# 'sqft_basement', 'yr_built', 'yr_renovated', 'zipcode', 'lat', 'long',
+# 'sqft_living15', 'sqft_lot15', 'year', 'month'], dtype='object')
+
+# The zip code should be managed as a categorical variable
+
+print(df['zipcode'].value_counts())
+
+# 98103    602
+# 98038    589
+# 98115    583
+# 98052    574
+# 98117    553
+#         ...
+# 98102    104
+# 98010    100
+# 98024     80
+# 98148     57
+# 98039     50
+# Name: zipcode, Length: 70, dtype: int64
+
+# We have 70 unique zip codes, too much to call pd.get_dummies
+# Now, we are going to remove this column, but a good solution is do a manually work and categorize
+# expensive zip code and less expensive zip codes
+
+# Drop zipcode column
+df = df.drop('zipcode', axis=1)
+
+# Year renovated analysis
+print(df['yr_renovated'].value_counts())
+
+# 0       20683
+# 2014       91
+# 2013       37
+# 2003       36
+# 2000       35
+#         ...
+# 1934        1
+# 1959        1
+# 1951        1
+# 1948        1
+# 1944        1
+# Name: yr_renovated, Length: 70, dtype: int64
+
+# Most of the years are 0, that means not renovated
+
+# We are lucky because the higher renovation year is, the renovation is more recent, and zero means no renovated
+
+# We are going to keep this feature but one future task here is to convert it to a categorical feature, where 0 means
+# no renovated and one year means renovated
